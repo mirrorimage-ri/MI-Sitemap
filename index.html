@@ -929,49 +929,68 @@ async function poll(){
 }
 
 // ── Init ──
-(async()=>{
-  try{
-    // Load structure from DB (or use defaults)
-    let structRows=[];
-    try{ structRows=await sbGet('site_structure','id=eq.main'); }catch(e){}
+// SAFETY NET: always hide loading after 5s regardless of DB state
+const _loadingEl = document.getElementById('loading');
+const _safetyTimer = setTimeout(()=>{ _loadingEl.style.display='none'; }, 5000);
 
-    if(structRows.length&&structRows[0].data){
-      SITE=JSON.parse(structRows[0].data);
+(async()=>{
+  const done = () => { clearTimeout(_safetyTimer); _loadingEl.style.display='none'; };
+
+  try {
+    // Step 1: Load site structure (non-fatal if table missing)
+    let structRows = [];
+    try { structRows = await sbGet('site_structure','id=eq.main'); } catch(e) { console.warn('site_structure table missing - using defaults'); }
+
+    if (structRows.length && structRows[0].data) {
+      try { SITE = JSON.parse(structRows[0].data); } catch(e) { SITE = JSON.parse(JSON.stringify(DEFAULT_SITE)); }
     } else {
-      SITE=JSON.parse(JSON.stringify(DEFAULT_SITE));
-      // Seed structure to DB
-      await saveStructure().catch(()=>{});
+      SITE = JSON.parse(JSON.stringify(DEFAULT_SITE));
+      saveStructure().catch(()=>{});
     }
 
-    // Build PAGE_MAP
-    PAGE_MAP={home:HOME_PAGE};
-    SITE.forEach(sec=>sec.pages.forEach(p=>{PAGE_MAP[p.id]=p;}));
+    // Step 2: Build PAGE_MAP and state
+    PAGE_MAP = { home: HOME_PAGE };
+    SITE.forEach(sec => sec.pages.forEach(p => { PAGE_MAP[p.id] = p; }));
+    const allIds = ['home', ...SITE.flatMap(s => s.pages.map(p => p.id))];
+    allIds.forEach(id => { state[id] = { copy_status:'Not Started', image_status:'Not Started', copy_notes:'', image_notes:'', updated_by:'', updated_at:'', dropdowns:null }; });
 
-    // Init state for all pages
-    const allIds=['home',...SITE.flatMap(s=>s.pages.map(p=>p.id))];
-    allIds.forEach(id=>{state[id]={copy_status:'Not Started',image_status:'Not Started',copy_notes:'',image_notes:'',updated_by:'',updated_at:'',dropdowns:null};});
+    // Step 3: Load page statuses — try full fetch, fall back to no-dropdowns fetch
+    let rows = [];
+    try {
+      rows = await sbGet('page_status');
+    } catch(e) {
+      console.warn('Full page_status fetch failed, trying without dropdowns column:', e.message);
+      try {
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/page_status?select=id,copy_status,image_status,copy_notes,image_notes,updated_by,updated_at`, { headers: hdrs });
+        if (r.ok) rows = await r.json();
+      } catch(e2) { console.warn('page_status fetch also failed:', e2.message); }
+    }
 
-    // Load statuses from DB
-    const rows=await sbGet('page_status');
-    rows.forEach(row=>{
-      if(state[row.id]) state[row.id]={copy_status:row.copy_status,image_status:row.image_status,copy_notes:row.copy_notes||'',image_notes:row.image_notes||'',updated_by:row.updated_by||'',updated_at:row.updated_at||'',dropdowns:row.dropdowns?JSON.parse(row.dropdowns):null};
+    rows.forEach(row => {
+      if (!state[row.id]) return;
+      let dd = null;
+      try { dd = row.dropdowns ? JSON.parse(row.dropdowns) : null; } catch(e) {}
+      state[row.id] = { copy_status: row.copy_status||'Not Started', image_status: row.image_status||'Not Started', copy_notes: row.copy_notes||'', image_notes: row.image_notes||'', updated_by: row.updated_by||'', updated_at: row.updated_at||'', dropdowns: dd };
     });
 
     buildGrid();
     setSyncStatus('saved','Live ✓'); setTimeout(()=>setSyncStatus('','Live'),1500);
-    lastSig=JSON.stringify(rows);
-  }catch(e){
-    // Fallback: load defaults offline
-    SITE=JSON.parse(JSON.stringify(DEFAULT_SITE));
-    PAGE_MAP={home:HOME_PAGE};
-    SITE.forEach(sec=>sec.pages.forEach(p=>{PAGE_MAP[p.id]=p;}));
-    const allIds=['home',...SITE.flatMap(s=>s.pages.map(p=>p.id))];
-    allIds.forEach(id=>{state[id]={copy_status:'Not Started',image_status:'Not Started',copy_notes:'',image_notes:'',updated_by:'',updated_at:'',dropdowns:null};});
+    lastSig = JSON.stringify(rows);
+
+  } catch(e) {
+    // Full fallback — load everything from defaults offline
+    console.error('Init failed, loading offline defaults:', e);
+    SITE = JSON.parse(JSON.stringify(DEFAULT_SITE));
+    PAGE_MAP = { home: HOME_PAGE };
+    SITE.forEach(sec => sec.pages.forEach(p => { PAGE_MAP[p.id] = p; }));
+    const allIds = ['home', ...SITE.flatMap(s => s.pages.map(p => p.id))];
+    allIds.forEach(id => { state[id] = { copy_status:'Not Started', image_status:'Not Started', copy_notes:'', image_notes:'', updated_by:'', updated_at:'', dropdowns:null }; });
     buildGrid();
-    setSyncStatus('error','DB error — check Supabase setup'); console.error('Load failed:',e);
+    setSyncStatus('error', 'Offline — run Supabase SQL setup');
   }
-  document.getElementById('loading').style.display='none';
-  setInterval(poll,8000);
+
+  done();
+  setInterval(poll, 8000);
 })();
 
 // Supabase: run these in SQL editor:
