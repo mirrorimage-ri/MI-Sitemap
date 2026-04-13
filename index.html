@@ -83,6 +83,19 @@
   /* Add page / add section buttons */
   .add-page-btn{width:100%;background:none;border:1.5px dashed #ccc;border-radius:4px;padding:7px 6px;font-size:.7rem;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:border-color .15s,color .15s;margin-top:0;}
   .add-page-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  /* Inline add-page form */
+  .inline-add-page{display:none;width:100%;background:white;border:1.5px solid var(--accent2);border-radius:6px;padding:10px 10px 8px;margin-top:0;}
+  .inline-add-page.open{display:block;}
+  .inline-add-page input,.inline-add-page select{width:100%;font-family:'DM Sans',sans-serif;font-size:.75rem;border:1px solid #ddd;border-radius:4px;padding:5px 8px;margin-bottom:5px;color:var(--ink);}
+  .inline-add-page input:focus,.inline-add-page select:focus{outline:none;border-color:var(--accent2);}
+  .inline-add-page-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);margin-bottom:3px;display:block;}
+  .inline-add-page-row{display:flex;gap:5px;margin-top:2px;}
+  .inline-add-page-row button{flex:1;padding:6px;font-size:.72rem;border-radius:4px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;}
+  .iap-confirm{background:var(--accent);color:white;}
+  .iap-confirm:hover{background:#c0392b;}
+  .iap-cancel{background:#eee;color:#555;}
+  .iap-cancel:hover{background:#ddd;}
   .add-section-col{display:flex;flex-direction:column;align-items:center;padding:0 6px;}
   .add-section-btn-main{background:none;border:2px dashed var(--light);border-radius:4px;padding:14px 10px;font-size:.75rem;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;width:100%;transition:border-color .15s,color .15s;white-space:nowrap;}
   .add-section-btn-main:hover{border-color:var(--accent2);color:var(--accent2);}
@@ -234,22 +247,6 @@
   <div class="lb-caption" id="lb-caption"></div>
   <div class="lb-nav"><button onclick="lbNav(-1)">← Prev</button><button onclick="lbNav(1)">Next →</button></div>
   <div class="lb-counter" id="lb-counter"></div>
-</div>
-
-<!-- Add Page Modal -->
-<div class="modal-overlay" id="add-page-modal">
-  <div class="modal">
-    <h4>Add New Page</h4>
-    <div class="modal-field"><label>Page Name</label><input type="text" id="new-page-name" placeholder="e.g. Shop"></div>
-    <div class="modal-field"><label>URL (relative)</label><input type="text" id="new-page-url" placeholder="e.g. /shop/"></div>
-    <div class="modal-field"><label>Status</label>
-      <select id="new-page-status"><option value="publish">Published</option><option value="draft">Draft</option><option value="planned">Planned</option></select>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-cancel" onclick="closeModal('add-page-modal')">Cancel</button>
-      <button class="modal-confirm" onclick="confirmAddPage()">Add Page</button>
-    </div>
-  </div>
 </div>
 
 <!-- Add Section Modal -->
@@ -409,7 +406,6 @@ const HOME_PAGE={id:'home',name:'Home',url:'https://mirrorimage.spurrierdesign.c
 let SITE = [];
 let PAGE_MAP = {};
 let state = {};
-let pendingSectionTarget = null; // which section to add page to
 
 let userName = localStorage.getItem('mi_username')||'';
 const nameInput = document.getElementById('user-name-input');
@@ -442,7 +438,23 @@ function buildGrid() {
     sec.pages.forEach(page => addPageCardToList(list, page, si));
 
     const addBtn = document.createElement('div');
-    addBtn.innerHTML = `<div class="page-connector-line"></div><button class="add-page-btn" onclick="openAddPageModal(${si})">+ Add Page</button>`;
+    addBtn.innerHTML = `
+      <div class="page-connector-line"></div>
+      <button class="add-page-btn" id="show-add-${si}" onclick="showInlineAddPage(${si})">+ Add Page</button>
+      <div class="inline-add-page" id="inline-add-page-${si}">
+        <span class="inline-add-page-label">New Page</span>
+        <input type="text" id="iap-name-${si}" placeholder="Page name (e.g. Shop)">
+        <input type="text" id="iap-url-${si}" placeholder="URL (e.g. /shop/)">
+        <select id="iap-status-${si}">
+          <option value="planned">Planned</option>
+          <option value="publish">Published</option>
+          <option value="draft">Draft</option>
+        </select>
+        <div class="inline-add-page-row">
+          <button class="iap-cancel" onclick="hideInlineAddPage(${si})">Cancel</button>
+          <button class="iap-confirm" onclick="confirmInlineAddPage(${si})">Add Page</button>
+        </div>
+      </div>`;
     list.appendChild(addBtn);
 
     col.appendChild(list);
@@ -521,36 +533,39 @@ function confirmAddSection() {
   closeModal('add-section-modal');
 }
 
-// ── Add Page Modal ──
-function openAddPageModal(si) {
-  pendingSectionTarget = si;
-  document.getElementById('new-page-name').value='';
-  document.getElementById('new-page-url').value='';
-  document.getElementById('new-page-status').value='planned';
-  document.getElementById('add-page-modal').classList.add('open');
-  setTimeout(()=>document.getElementById('new-page-name').focus(),50);
+// ── Add Page (inline) ──
+function showInlineAddPage(si) {
+  document.getElementById('show-add-'+si).style.display='none';
+  const form=document.getElementById('inline-add-page-'+si);
+  form.classList.add('open');
+  setTimeout(()=>document.getElementById('iap-name-'+si).focus(),50);
 }
-function confirmAddPage() {
-  const name = document.getElementById('new-page-name').value.trim();
-  const urlVal = document.getElementById('new-page-url').value.trim();
-  const status = document.getElementById('new-page-status').value;
-  if(!name) return;
-  const base = 'https://mirrorimage.spurrierdesign.com';
-  const fullUrl = urlVal.startsWith('http') ? urlVal : base+(urlVal||'/'+name.toLowerCase().replace(/\s+/g,'-')+'/');
-  const id = 'page-'+Date.now();
-  const page = { id, name, url: fullUrl, wpStatus: status, images:[], dropdowns:[] };
-  PAGE_MAP[id] = page;
-  state[id] = { copy_status:'Not Started', image_status:'Not Started', copy_notes:'', image_notes:'', updated_by:'', updated_at:'', dropdowns:null };
-  SITE[pendingSectionTarget].pages.push(page);
+function hideInlineAddPage(si) {
+  document.getElementById('show-add-'+si).style.display='';
+  const form=document.getElementById('inline-add-page-'+si);
+  form.classList.remove('open');
+  document.getElementById('iap-name-'+si).value='';
+  document.getElementById('iap-url-'+si).value='';
+  document.getElementById('iap-status-'+si).value='planned';
+}
+function confirmInlineAddPage(si) {
+  const name=document.getElementById('iap-name-'+si).value.trim();
+  const urlVal=document.getElementById('iap-url-'+si).value.trim();
+  const status=document.getElementById('iap-status-'+si).value;
+  if(!name) { document.getElementById('iap-name-'+si).focus(); return; }
+  const base='https://mirrorimage.spurrierdesign.com';
+  const fullUrl=urlVal.startsWith('http')?urlVal:base+(urlVal||'/'+name.toLowerCase().replace(/\s+/g,'-')+'/');
+  const id='page-'+Date.now();
+  const page={id,name,url:fullUrl,wpStatus:status,images:[],dropdowns:[]};
+  PAGE_MAP[id]=page;
+  state[id]={copy_status:'Not Started',image_status:'Not Started',copy_notes:'',image_notes:'',updated_by:'',updated_at:'',dropdowns:null};
+  SITE[si].pages.push(page);
   saveStructure();
   buildGrid();
-  closeModal('add-page-modal');
 }
 
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m) m.classList.remove('open');}));
-// Enter key submits modals
-document.getElementById('add-page-modal').addEventListener('keydown',e=>{ if(e.key==='Enter') confirmAddPage(); });
 document.getElementById('add-section-modal').addEventListener('keydown',e=>{ if(e.key==='Enter') confirmAddSection(); });
 
 // ── State helpers ──
