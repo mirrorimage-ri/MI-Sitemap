@@ -137,6 +137,16 @@
   .add-dropdown-btn { width: 100%; background: none; border: 1.5px dashed #ccc; border-radius: 4px; padding: 6px; font-size: 0.72rem; color: var(--mid); cursor: pointer; margin-top: 6px; font-family: 'DM Sans', sans-serif; transition: border-color 0.15s, color 0.15s; }
   .add-dropdown-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+  /* Item notes */
+  .dropdown-item { flex-wrap: wrap; }
+  .item-note-toggle { background: none; border: none; cursor: pointer; font-size: 0.82rem; color: #ccc; padding: 0 2px; flex-shrink: 0; line-height: 1; transition: color 0.15s; title: attr(title); }
+  .item-note-toggle:hover { color: var(--accent2); }
+  .item-note-toggle.has-note { color: var(--accent2); }
+  .item-note-row { display: none; width: 100%; padding: 5px 2px 2px; }
+  .item-note-row.open { display: block; }
+  .item-note-input { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 0.75rem; border: 1px solid #e0e0e0; border-radius: 4px; padding: 6px 8px; color: var(--ink); resize: vertical; min-height: 52px; background: #fafafa; transition: border-color 0.15s; }
+  .item-note-input:focus { outline: none; border-color: var(--accent2); background: white; }
+
   .add-section-btn { width: 100%; background: none; border: 1.5px dashed var(--light); border-radius: 6px; padding: 9px; font-size: 0.75rem; color: var(--mid); cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; transition: border-color 0.15s, color 0.15s; margin-top: 4px; }
   .add-section-btn:hover { border-color: var(--accent2); color: var(--accent2); }
 
@@ -748,7 +758,11 @@ function renderDropdowns(id) {
               <option${item.status==='Complete'?' selected':''}>Complete</option>
               <option${item.status==='N/A'?' selected':''}>N/A</option>
             </select>
+            <button class="item-note-toggle${item.note?' has-note':''}" title="${item.note?'Edit note':'Add note'}" onclick="toggleItemNote('note-${si}-${ii}')">💬</button>
             <button onclick="removeItem('${id}',${si},${ii})" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:0.9rem;padding:0 2px;flex-shrink:0" title="Remove">✕</button>
+            <div class="item-note-row" id="note-${si}-${ii}">
+              <textarea class="item-note-input" placeholder="Add a note for this item…" onblur="updateItemNote('${id}',${si},${ii},this.value)">${item.note||''}</textarea>
+            </div>
           </div>`).join('')}
         <div class="inline-add" id="inline-add-${si}">
           <input type="text" placeholder="Label (e.g. Get a Quote)" id="add-label-${si}">
@@ -772,6 +786,21 @@ function toggleSection(hdr) {
   const items = hdr.nextElementSibling;
   hdr.classList.toggle('collapsed');
   items.classList.toggle('hidden');
+}
+function toggleItemNote(noteId) {
+  const row = document.getElementById(noteId);
+  const isOpen = row.classList.toggle('open');
+  if (isOpen) row.querySelector('textarea').focus();
+}
+function updateItemNote(id, si, ii, val) {
+  getDropdowns(id)[si].items[ii].note = val;
+  // Update toggle button appearance without full re-render
+  const toggle = document.querySelector(`#dd-item-${si}-${ii} .item-note-toggle`);
+  if (toggle) {
+    toggle.classList.toggle('has-note', !!val.trim());
+    toggle.title = val.trim() ? 'Edit note' : 'Add note';
+  }
+  debounceSave(id);
 }
 function renameSection(id, si, val) {
   getDropdowns(id)[si].section = val;
@@ -805,7 +834,7 @@ function confirmAddItem(id, si) {
   const label = document.getElementById('add-label-'+si).value.trim();
   const url = document.getElementById('add-url-'+si).value.trim();
   if (!label) return;
-  getDropdowns(id)[si].items.push({ label, url: url||'#', status:'Not Started' });
+  getDropdowns(id)[si].items.push({ label, url: url||'#', status:'Not Started', note:'' });
   debounceSave(id); renderDropdowns(id);
 }
 function addDropdownSection() {
