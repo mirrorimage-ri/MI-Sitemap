@@ -106,8 +106,8 @@
   #detail-panel{display:none;position:fixed;right:0;top:0;bottom:0;width:390px;background:white;border-left:4px solid var(--accent);box-shadow:-4px 0 32px rgba(0,0,0,.18);z-index:300;flex-direction:column;animation:slideInRight .2s ease;}
   #detail-panel.open{display:flex;}
   @keyframes slideInRight{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
-  .dp-header{background:var(--ink);color:white;padding:16px 20px 14px;flex-shrink:0;position:relative;}
-  .dp-header .dp-name-row{display:flex;align-items:center;gap:8px;}
+  .dp-header{background:var(--ink);color:white;padding:14px 16px 12px;flex-shrink:0;}
+  .dp-header .dp-name-row{display:flex;align-items:center;gap:8px;padding-right:0;}
   .dp-name-input{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:4px;color:white;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.05em;padding:4px 8px;outline:none;}
   .dp-name-input:focus{background:rgba(255,255,255,.18);border-color:var(--accent2);}
   .dp-url-input{display:block;width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:3px;color:#90caf9;font-size:.7rem;padding:4px 7px;margin-top:6px;font-family:'DM Sans',sans-serif;outline:none;}
@@ -115,8 +115,8 @@
   .dp-header .dp-wp-status{font-size:.62rem;margin-top:6px;display:inline-block;padding:2px 8px;border-radius:10px;font-weight:600;cursor:pointer;}
   .dp-header .dp-wp-status.publish{background:#d4edda;color:#145a32;}
   .dp-header .dp-wp-status.draft{background:#fff3cd;color:#856404;}
-  .dp-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#aaa;}
-  .dp-close:hover{color:white;}
+  .dp-close{background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.35);border-radius:50%;width:30px;height:30px;min-width:30px;font-size:1rem;cursor:pointer;color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
+  .dp-close:hover{background:var(--accent);border-color:var(--accent);}
   .dp-delete-btn{background:rgba(232,64,51,.15);border:1px solid rgba(232,64,51,.3);color:#ff8a80;border-radius:3px;padding:3px 8px;font-size:.68rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;}
   .dp-delete-btn:hover{background:var(--accent);color:white;border-color:var(--accent);}
 
@@ -425,11 +425,11 @@
 
 <!-- Detail Panel -->
 <div id="detail-panel">
-  <button class="dp-close" onclick="closeDetail()">✕</button>
   <div class="dp-header">
     <div class="dp-name-row">
       <input class="dp-name-input" id="dp-name" placeholder="Page name" onchange="updatePageMeta()">
       <button class="dp-delete-btn" onclick="deletePage()">Delete</button>
+      <button class="dp-close" onclick="closeDetail()" title="Close (Esc)">✕</button>
     </div>
     <input class="dp-url-input" id="dp-url-input" placeholder="https://…" onchange="updatePageMeta()">
     <span class="dp-wp-status" id="dp-wp-status" onclick="cycleWpStatus()"></span>
@@ -1191,7 +1191,11 @@ function lbNav(dir){lbIndex=(lbIndex+dir+lbImages.length)%lbImages.length;openLi
 document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))closeLightbox();});
 document.addEventListener('keydown',e=>{
   if(document.getElementById('lightbox').classList.contains('open')){
-    if(e.key==='Escape')closeLightbox();
+    if(e.key==='Escape'){
+      if(document.getElementById('lightbox').classList.contains('open')){closeLightbox();return;}
+      if(document.getElementById('detail-panel').classList.contains('open')){closeDetail();return;}
+      if(document.getElementById('action-panel').classList.contains('open')){toggleActionPanel();}
+    }
     if(e.key==='ArrowRight')lbNav(1);
     if(e.key==='ArrowLeft')lbNav(-1);
   }
