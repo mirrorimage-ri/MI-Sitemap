@@ -152,9 +152,9 @@
   .item-status-select.s-done{background:#d4edda;border-color:#88c9a0;color:#145a32;}
   .item-status-select.s-inprog{background:#fff3cd;border-color:#f0c060;color:#7a5000;}
   .item-status-select.s-na{background:#f0f0f0;border-color:#ccc;color:#666;}
-  .item-note-toggle{background:none;border:none;cursor:pointer;font-size:.82rem;color:#ccc;padding:0 2px;flex-shrink:0;line-height:1;transition:color .15s;}
-  .item-note-toggle:hover{color:var(--accent2);}
-  .item-note-toggle.has-note{color:var(--accent2);}
+  .item-note-toggle{background:none;border:none;cursor:pointer;font-size:.82rem;color:#bbb;padding:0 2px;flex-shrink:0;line-height:1;transition:all .2s;opacity:.35;}
+  .item-note-toggle:hover{opacity:1;color:var(--accent2);}
+  .item-note-toggle.has-note{opacity:1;color:var(--accent2);}
   .item-note-row{display:none;width:100%;padding:5px 2px 2px;}
   .item-note-row.open{display:block;}
   .item-note-input{width:100%;font-family:'DM Sans',sans-serif;font-size:.75rem;border:1px solid #e0e0e0;border-radius:4px;padding:6px 8px;color:var(--ink);resize:vertical;min-height:52px;background:#fafafa;transition:border-color .15s;}
@@ -885,7 +885,7 @@ function renderDropdowns(id){
               <option${item.status==='Complete'?' selected':''}>Complete</option>
               <option${item.status==='N/A'?' selected':''}>N/A</option>
             </select>
-            <button class="item-note-toggle${item.note?' has-note':''}" title="${item.note?'Edit note':'Add note'}" onclick="toggleItemNote('note-${si}-${ii}')">💬</button>
+            <button class="item-note-toggle${item.note?' has-note':''}" title="${item.note?'Edit note':'Add note'}" onclick="toggleItemNote('note-${si}-${ii}')">${item.note?'💬':'✏️'}</button>
             <button onclick="removeItem('${id}',${si},${ii})" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:.9rem;padding:0 2px;flex-shrink:0" title="Remove">✕</button>
             <div class="item-note-row" id="note-${si}-${ii}">
               <textarea class="item-note-input" placeholder="Add a note…" onblur="updateItemNote('${id}',${si},${ii},this.value)">${item.note||''}</textarea>
@@ -909,7 +909,7 @@ function renderDropdowns(id){
 function toggleSection(hdr){const items=hdr.nextElementSibling;hdr.classList.toggle('collapsed');items.classList.toggle('hidden');}
 function toggleItemNote(noteId){const row=document.getElementById(noteId);const isOpen=row.classList.toggle('open');if(isOpen)row.querySelector('textarea').focus();}
 function renameDropdownSection(id,si,val){getDropdowns(id)[si].section=val;debounceSave(id);}
-function updateItemNote(id,si,ii,val){getDropdowns(id)[si].items[ii].note=val;const t=document.querySelector(`#dd-item-${si}-${ii} .item-note-toggle`);if(t){t.classList.toggle('has-note',!!val.trim());t.title=val.trim()?'Edit note':'Add note';}debounceSave(id);}
+function updateItemNote(id,si,ii,val){getDropdowns(id)[si].items[ii].note=val;const t=document.querySelector(`#dd-item-${si}-${ii} .item-note-toggle`);if(t){const h=!!val.trim();t.classList.toggle('has-note',h);t.title=h?'Edit note':'Add note';t.textContent=h?'💬':'✏️';}debounceSave(id);}
 function updateItemStatus(id,si,ii,sel){styleItemSelect(sel);getDropdowns(id)[si].items[ii].status=sel.value;debounceSave(id);renderDropdowns(id);}
 function removeItem(id,si,ii){getDropdowns(id)[si].items.splice(ii,1);debounceSave(id);renderDropdowns(id);}
 function removeSection_dd(id,si){if(!confirm('Remove this section?')) return;getDropdowns(id).splice(si,1);debounceSave(id);renderDropdowns(id);}
