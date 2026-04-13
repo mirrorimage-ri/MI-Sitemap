@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mirror Image Screen Printing — Site Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0f; --paper: #f5f0e8; --accent: #e84033; --accent2: #f5a623;
+    --mid: #6b6b6b; --light: #ddd8ce; --card-bg: #ffffff; --done: #2d7a4f;
+    --shadow: 0 2px 12px rgba(0,0,0,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
+
+  header {
+    background: var(--ink); color: white; padding: 28px 40px 22px;
+    display: flex; align-items: flex-end; gap: 24px;
+    position: sticky; top: 0; z-index: 100; border-bottom: 4px solid var(--accent);
+  }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 0.06em; line-height: 1; }
+  header .sub { font-size: 0.78rem; color: #aaa; letter-spacing: 0.04em; padding-bottom: 3px; }
+  .header-right { margin-left: auto; display: flex; gap: 16px; align-items: center; }
+  .legend-pill { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #ccc; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot.done { background: #4caf7d; }
+  .dot.inprog { background: var(--accent2); }
+  .dot.notstarted { background: #888; }
+
+  #sync-status {
+    display: flex; align-items: center; gap: 6px; font-size: 0.72rem;
+    padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.08); color: #ccc; transition: all 0.3s;
+  }
+  #sync-status.syncing { color: var(--accent2); }
+  #sync-status.saved { color: #4caf7d; }
+  #sync-status.error { color: #e84033; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .sync-dot.pulse { animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  #name-banner {
+    background: #1a1a2e; color: white; padding: 10px 40px;
+    display: flex; align-items: center; gap: 12px; font-size: 0.82rem;
+  }
+  #name-banner span { color: #aaa; }
+  #user-name-input {
+    background: transparent; border: none; border-bottom: 1px solid #444;
+    color: white; font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+    padding: 2px 4px; width: 160px; outline: none;
+  }
+  #user-name-input:focus { border-bottom-color: var(--accent2); }
+
+  main { max-width: 1400px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .home-node-wrap { display: flex; flex-direction: column; align-items: center; }
+  .home-node {
+    background: var(--ink); color: white; padding: 18px 48px; border-radius: 4px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.08em;
+    box-shadow: var(--shadow); cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;
+  }
+  .home-node:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .home-node .url-tag { font-family: 'DM Sans', sans-serif; font-size: 0.68rem; opacity: 0.5; font-weight: 300; display: block; margin-top: 4px; }
+  .status-bar { display: flex; gap: 4px; margin-top: 8px; justify-content: center; }
+  .v-connector { width: 2px; height: 36px; background: var(--light); margin: 0 auto; }
+
+  .card-select {
+    font-size: 0.6rem; border-radius: 3px; padding: 1px 4px; border: 1px solid #ddd;
+    background: white; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500;
+    color: var(--ink); flex: 1; max-width: 90px; appearance: none; text-align: center;
+  }
+  .card-select.copy-sel  { background: #eef3fb; border-color: #b8ccea; color: #1a3a7a; }
+  .card-select.img-sel   { background: #fbeef5; border-color: #d8b0cc; color: #5a1a3a; }
+  .card-select.status-done   { background: #d4edda; border-color: #88c9a0; color: #145a32; }
+  .card-select.status-inprog { background: #fff3cd; border-color: #f0c060; color: #7a5000; }
+  .card-select.status-na     { background: #f0f0f0; border-color: #ccc; color: #666; }
+
+  .sections-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0; }
+  .h-line-row { grid-column: 1 / -1; height: 2px; background: var(--light); }
+  .section-col { display: flex; flex-direction: column; align-items: center; padding: 0 6px; }
+  .tick-down { width: 2px; height: 28px; background: var(--light); }
+  .section-header {
+    background: var(--ink); color: white; border-left: 4px solid var(--accent);
+    padding: 8px 12px; border-radius: 3px; width: 100%;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.07em;
+    text-align: center; box-shadow: var(--shadow); white-space: nowrap;
+  }
+  .page-list { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .page-connector-line { width: 2px; height: 12px; background: var(--light); }
+
+  .page-card {
+    width: 100%; background: var(--card-bg); border: 1px solid var(--light);
+    border-radius: 4px; padding: 9px 10px 8px; cursor: pointer; position: relative;
+    transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+  }
+  .page-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.13); transform: translateY(-1px); border-color: #bbb; z-index: 10; }
+  .page-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+  .page-card.just-updated { animation: flashUpdate 1.2s ease; }
+  @keyframes flashUpdate { 0%{background:#fffde7} 100%{background:white} }
+  .page-name { font-size: 0.78rem; font-weight: 600; color: var(--ink); line-height: 1.2; }
+  .page-url { font-size: 0.62rem; color: var(--mid); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chips { display: flex; gap: 3px; margin-top: 6px; }
+
+  /* Image badge — shows count of known images */
+  .img-badge {
+    position: absolute; top: 6px; right: 6px;
+    background: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8;
+    font-size: 0.55rem; padding: 1px 5px; border-radius: 10px; font-weight: 700;
+  }
+
+  /* Draft badge */
+  .draft-badge {
+    position: absolute; top: 6px; right: 6px;
+    background: #fff3cd; color: #856404; border: 1px solid #ffc107;
+    font-size: 0.55rem; padding: 1px 5px; border-radius: 10px; font-weight: 700;
+  }
+
+  #detail-panel {
+    display: none; position: fixed; right: 24px; top: 120px; width: 320px;
+    background: white; border: 1px solid var(--light); border-top: 4px solid var(--accent);
+    border-radius: 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); padding: 20px; z-index: 200;
+    animation: slideIn 0.18s ease; max-height: calc(100vh - 140px); overflow-y: auto;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateX(12px)} to{opacity:1;transform:none} }
+  #detail-panel h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.05em; margin-bottom: 2px; }
+  #detail-panel .detail-url { font-size: 0.7rem; color: #1155cc; text-decoration: underline; word-break: break-all; margin-bottom: 10px; }
+  .detail-field { margin-bottom: 10px; }
+  .detail-field label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mid); margin-bottom: 4px; }
+  .detail-field select, .detail-field textarea { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; border: 1px solid #ddd; border-radius: 4px; padding: 6px 8px; color: var(--ink); }
+  .detail-field textarea { height: 56px; resize: vertical; }
+  .close-btn { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #aaa; }
+  .close-btn:hover { color: var(--ink); }
+  .save-btn { width: 100%; background: var(--accent); color: white; border: none; border-radius: 4px; padding: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.07em; cursor: pointer; margin-top: 6px; }
+  .save-btn:hover { background: #c0392b; }
+  .last-edited { font-size: 0.65rem; color: #aaa; margin-top: 8px; text-align: center; }
+
+  /* Known images list in detail panel */
+  .known-images { margin-top: 8px; }
+  .known-images-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mid); margin-bottom: 6px; }
+  .img-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #333; padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
+  .img-item:last-child { border-bottom: none; }
+  .img-thumb { width: 32px; height: 32px; object-fit: cover; border-radius: 3px; background: #eee; flex-shrink: 0; }
+  .img-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #555; }
+
+  .stats-bar {
+    display: flex; gap: 24px; margin-bottom: 32px; padding: 14px 20px;
+    background: white; border: 1px solid var(--light); border-radius: 6px;
+    box-shadow: var(--shadow); flex-wrap: wrap;
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; line-height: 1; color: var(--ink); }
+  .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mid); margin-top: 2px; }
+  .stat-divider { width: 1px; background: var(--light); align-self: stretch; }
+  .progress-track { flex: 1; min-width: 160px; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+  .prog-row { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; }
+  .prog-label { width: 44px; color: var(--mid); font-weight: 500; }
+  .prog-bar-bg { flex: 1; height: 6px; background: var(--light); border-radius: 3px; overflow: hidden; }
+  .prog-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .prog-bar-fill.copy-fill  { background: #3a7bd5; }
+  .prog-bar-fill.image-fill { background: #a855c8; }
+  .prog-pct { width: 28px; text-align: right; color: var(--ink); font-weight: 600; }
+
+  .controls { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+  .ctrl-btn { padding: 7px 16px; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--ink); background: white; transition: background 0.15s, color 0.15s; }
+  .ctrl-btn:hover { background: var(--ink); color: white; }
+  .ctrl-btn.primary { background: var(--ink); color: white; }
+  .ctrl-btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+
+  #loading {
+    position: fixed; inset: 0; background: rgba(15,15,15,0.88);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 999; color: white; gap: 16px;
+  }
+  #loading h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.08em; }
+  #loading p { font-size: 0.85rem; color: #aaa; }
+  .spinner { width: 36px; height: 36px; border: 3px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media print { header{position:static} #detail-panel,#name-banner,.controls{display:none!important} }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <h2>Loading Sitemap</h2>
+  <p>Connecting to database…</p>
+</div>
+
+<header>
+  <div>
+    <h1>Mirror Image Screen Printing</h1>
+    <div class="sub">mirrorimage.spurrierdesign.com &nbsp;·&nbsp; Website Content Flow Map</div>
+  </div>
+  <div class="header-right">
+    <div class="legend-pill"><div class="dot done"></div> Copy done</div>
+    <div class="legend-pill"><div class="dot inprog"></div> In progress</div>
+    <div class="legend-pill"><div class="dot notstarted"></div> Not started</div>
+    <div id="sync-status">
+      <div class="sync-dot"></div>
+      <span id="sync-text">Connecting…</span>
+    </div>
+  </div>
+</header>
+
+<div id="name-banner">
+  <span>You are:</span>
+  <input id="user-name-input" type="text" placeholder="Enter your name…" maxlength="30">
+</div>
+
+<main>
+  <div class="controls">
+    <button class="ctrl-btn primary" onclick="markAll('copy_status','Complete')">✓ Mark All Copy Done</button>
+    <button class="ctrl-btn" onclick="markAll('image_status','Complete')">✓ Mark All Images Done</button>
+    <button class="ctrl-btn" onclick="resetAll()">↺ Reset All</button>
+    <button class="ctrl-btn" onclick="window.print()">⎙ Print</button>
+    <button class="ctrl-btn" onclick="exportCSV()">↓ Export CSV</button>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" id="total-pages">19</div>
+      <div class="stat-label">Total Pages</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num" id="copy-done-count" style="color:var(--done)">0</div>
+      <div class="stat-label">Copy Done</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="img-done-count" style="color:#a855c8">0</div>
+      <div class="stat-label">Images Done</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="progress-track">
+      <div class="prog-row">
+        <span class="prog-label">Copy</span>
+        <div class="prog-bar-bg"><div class="prog-bar-fill copy-fill" id="copy-bar" style="width:0%"></div></div>
+        <span class="prog-pct" id="copy-pct">0%</span>
+      </div>
+      <div class="prog-row">
+        <span class="prog-label">Images</span>
+        <div class="prog-bar-bg"><div class="prog-bar-fill image-fill" id="img-bar" style="width:0%"></div></div>
+        <span class="prog-pct" id="img-pct">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home node -->
+  <div class="home-node-wrap">
+    <div class="home-node" onclick="openDetail('home','Home','https://mirrorimage.spurrierdesign.com/')">
+      HOME
+      <span class="url-tag">mirrorimage.spurrierdesign.com/</span>
+    </div>
+    <div class="status-bar">
+      <select class="card-select copy-sel" data-id="home" data-type="copy_status" onchange="onStatusChange(this)">
+        <option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option>
+      </select>
+      <select class="card-select img-sel" data-id="home" data-type="image_status" onchange="onStatusChange(this)">
+        <option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option>
+      </select>
+    </div>
+    <div class="v-connector"></div>
+  </div>
+
+  <div class="sections-grid" id="sections-grid">
+    <div class="h-line-row"></div>
+  </div>
+</main>
+
+<!-- Detail panel -->
+<div id="detail-panel">
+  <button class="close-btn" onclick="closeDetail()">✕</button>
+  <h3 id="dp-name"></h3>
+  <div class="detail-url" id="dp-url"></div>
+  <div class="detail-field">
+    <label>Copy Status</label>
+    <select id="dp-copy" onchange="syncFromPanel('copy_status')">
+      <option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option>
+    </select>
+  </div>
+  <div class="detail-field">
+    <label>Copy Notes</label>
+    <textarea id="dp-copy-notes" placeholder="e.g. Waiting on brand voice doc…"></textarea>
+  </div>
+  <div class="detail-field">
+    <label>Image Status</label>
+    <select id="dp-image" onchange="syncFromPanel('image_status')">
+      <option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option>
+    </select>
+  </div>
+  <div class="detail-field">
+    <label>Image Notes</label>
+    <textarea id="dp-image-notes" placeholder="e.g. Need new product shots…"></textarea>
+  </div>
+  <div id="dp-known-images" class="known-images"></div>
+  <button class="save-btn" onclick="saveDetail()">Save</button>
+  <div class="last-edited" id="dp-last-edited"></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://gslrukaitvxmxmwzbbqx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbHJ1a2FpdHZ4bXhtd3piYnF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NDE1NjUsImV4cCI6MjA5MTMxNzU2NX0.2x-zk7UjgwGEIll-T_PXMDAo1i1OgHDw1B8FwrWhIGQ';
+
+const hdrs = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Content-Type': 'application/json',
+};
+
+async function sbGet(table) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`, { headers: hdrs });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbUpsert(table, data) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { ...hdrs, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+// ── Real site data from WordPress XML export ──────────────────────────────
+const SITE = [
+  {
+    section: 'About Us',
+    pages: [
+      { id: 'about', name: 'About Us', url: 'https://mirrorimage.spurrierdesign.com/about/', wpStatus: 'publish',
+        images: [
+          { name: 'Group-175-1.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2024/12/Group-175-1.png' },
+          { name: 'mirror-image-impressions-magazine.jpg', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/mirror-image-impressions-magazine.jpg' },
+          { name: 'eco.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/eco.png' },
+          { name: 'activist.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/activist.png' },
+          { name: 'uaw.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/uaw.png' },
+        ]
+      },
+    ]
+  },
+  {
+    section: 'Services',
+    pages: [
+      { id: 'services', name: 'Services', url: 'https://mirrorimage.spurrierdesign.com/services/', wpStatus: 'publish', images: [] },
+      { id: 'screen-printing', name: 'Screen Printing', url: 'https://mirrorimage.spurrierdesign.com/services/screen-printing/', wpStatus: 'publish',
+        images: [
+          { name: 'screen_printing.webp', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/screen_printing.webp' },
+          { name: 'Screen-Printing.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/Screen-Printing.png' },
+        ]
+      },
+      { id: 'embroidery', name: 'Embroidery', url: 'https://mirrorimage.spurrierdesign.com/services/embroidery/', wpStatus: 'publish',
+        images: [
+          { name: 'embroidery.webp', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/embroidery.webp' },
+          { name: 'james-inigo-unsplash.jpg', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/james-inigo-beK1tm4ufpU-unsplash-scaled.jpg' },
+          { name: 'emb-hat-1.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/emb-hat-1.png' },
+          { name: 'emb-hat-2.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/emb-hat-2.png' },
+          { name: 'emb-hat-3.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/emb-hat-3.png' },
+          { name: 'Digitizing.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/Digitizing.png' },
+        ]
+      },
+      { id: 'promo-products', name: 'Promotional Products', url: 'https://mirrorimage.spurrierdesign.com/services/promotional-products/', wpStatus: 'publish',
+        images: [
+          { name: 'how-do-i-use-my-promo-products.webp', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/how-do-i-use-my-promo-products.webp' },
+        ]
+      },
+    ]
+  },
+  {
+    section: 'Gallery',
+    pages: [
+      { id: 'gallery', name: 'Gallery / Our Work', url: 'https://mirrorimage.spurrierdesign.com/our-work/', wpStatus: 'publish', images: [] },
+    ]
+  },
+  {
+    section: 'Quote',
+    pages: [
+      { id: 'quote', name: 'Quote', url: 'https://mirrorimage.spurrierdesign.com/quote/', wpStatus: 'publish', images: [] },
+      { id: 'quote-form', name: 'Quote Form', url: 'https://mirrorimage.spurrierdesign.com/quote/quote-form/', wpStatus: 'publish', images: [] },
+    ]
+  },
+  {
+    section: 'Catalogs',
+    pages: [
+      { id: 'catalogs', name: 'Catalogs', url: 'https://mirrorimage.spurrierdesign.com/catalog/', wpStatus: 'publish',
+        images: [
+          { name: 'hanes-bg.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/hanes-bg.png' },
+          { name: 'la-apparel.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/la-apparel.png' },
+          { name: 'sw-collection.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/sw-collection.png' },
+          { name: 'laa-logo.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/laa-logo.png' },
+          { name: 'hanes.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/hanes.png' },
+          { name: 'SWC-Logo.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/SWC-Logo.png' },
+          { name: 'logoipsum-218.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-218.png' },
+          { name: 'logoipsum-220.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-220.png' },
+          { name: 'logoipsum-221.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-221.png' },
+          { name: 'logoipsum-228.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-228.png' },
+          { name: 'logoipsum-229.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-229.png' },
+          { name: 'logoipsum-311.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-311.png' },
+          { name: 'logoipsum-317.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-317.png' },
+          { name: 'logoipsum-323.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-323.png' },
+          { name: 'logoipsum-325.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-325.png' },
+          { name: 'logoipsum-338.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-338.png' },
+          { name: 'logoipsum-340.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-340.png' },
+          { name: 'logoipsum-348.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-348.png' },
+          { name: 'logoipsum-371.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-371.png' },
+          { name: 'logoipsum-378.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-378.png' },
+        ]
+      },
+    ]
+  },
+  {
+    section: 'Resources',
+    pages: [
+      { id: 'resources', name: 'Resources', url: 'https://mirrorimage.spurrierdesign.com/resources/', wpStatus: 'publish', images: [] },
+      { id: 'art-guidelines', name: 'Art Guidelines', url: 'https://mirrorimage.spurrierdesign.com/resources/art-guidelines/', wpStatus: 'publish',
+        images: [
+          { name: 'shirt_guide.webp', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/shirt_guide.webp' },
+        ]
+      },
+      { id: 'faq', name: 'FAQ', url: 'https://mirrorimage.spurrierdesign.com/resources/faq/', wpStatus: 'publish', images: [] },
+    ]
+  },
+  {
+    section: 'Blog',
+    pages: [
+      { id: 'blog', name: 'Blog', url: 'https://mirrorimage.spurrierdesign.com/blog/', wpStatus: 'publish', images: [] },
+      { id: 'blog-post-1', name: 'Blog Post 1', url: 'https://mirrorimage.spurrierdesign.com/2025/04/blog-post-1/', wpStatus: 'publish',
+        images: [{ name: '600x__-screen_printing.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/600x__-Screen_Printing.png' }]
+      },
+      { id: 'blog-post-2', name: 'Blog Post 2', url: 'https://mirrorimage.spurrierdesign.com/2025/03/blog-post-2/', wpStatus: 'publish',
+        images: [{ name: '600x__-embroidery_thumbnail.png', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/600x__-embroidery_thumbnail.png' }]
+      },
+      { id: 'blog-post-3', name: 'Blog Post 3', url: 'https://mirrorimage.spurrierdesign.com/2025/04/blog-post-3/', wpStatus: 'publish',
+        images: [{ name: 'mf63.jpg', url: 'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/mf63.jpg' }]
+      },
+    ]
+  },
+  {
+    section: 'Contact',
+    pages: [
+      { id: 'contact', name: 'Contact', url: 'https://mirrorimage.spurrierdesign.com/contact/', wpStatus: 'publish', images: [] },
+    ]
+  },
+  {
+    section: 'Legal',
+    pages: [
+      { id: 'privacy-policy', name: 'Privacy Policy', url: 'https://mirrorimage.spurrierdesign.com/?page_id=3', wpStatus: 'draft', images: [] },
+    ]
+  },
+];
+
+const ALL_IDS = ['home', ...SITE.flatMap(s => s.pages.map(p => p.id))];
+const PAGE_MAP = {};
+SITE.forEach(s => s.pages.forEach(p => { PAGE_MAP[p.id] = p; }));
+PAGE_MAP['home'] = { id:'home', name:'Home', url:'https://mirrorimage.spurrierdesign.com/', wpStatus:'publish', images:[
+  { name:'drip-left-black.png', url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/drip-left-black.png' },
+  { name:'turq-drips.png', url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/turq-drips.png' },
+  { name:'black-drips.png', url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/black-drips.png' },
+  { name:'Theme-Screenshot.png', url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/Theme-Screenshot.png' },
+]};
+
+// State
+const state = {};
+ALL_IDS.forEach(id => {
+  state[id] = { copy_status:'Not Started', image_status:'Not Started', copy_notes:'', image_notes:'', updated_by:'', updated_at:'' };
+});
+
+// User
+let userName = localStorage.getItem('mi_username') || '';
+const nameInput = document.getElementById('user-name-input');
+nameInput.value = userName;
+nameInput.addEventListener('change', () => {
+  userName = nameInput.value.trim() || 'Anonymous';
+  localStorage.setItem('mi_username', userName);
+});
+
+// Build grid
+const grid = document.getElementById('sections-grid');
+SITE.forEach(sec => {
+  const col = document.createElement('div');
+  col.className = 'section-col';
+  col.innerHTML = `<div class="tick-down"></div><div class="section-header">${sec.section}</div>`;
+  const list = document.createElement('div');
+  list.className = 'page-list';
+
+  sec.pages.forEach(page => {
+    list.insertAdjacentHTML('beforeend', `<div class="page-connector-line"></div>`);
+    const card = document.createElement('div');
+    card.className = 'page-card';
+    card.id = 'card-' + page.id;
+
+    const imgCount = page.images ? page.images.length : 0;
+    const badge = page.wpStatus === 'draft'
+      ? `<div class="draft-badge">DRAFT</div>`
+      : (imgCount > 0 ? `<div class="img-badge">🖼 ${imgCount}</div>` : '');
+
+    card.innerHTML = `
+      ${badge}
+      <div class="page-name">${page.name}</div>
+      <div class="page-url">${page.url.replace('https://mirrorimage.spurrierdesign.com','')}</div>
+      <div class="chips">
+        <select class="card-select copy-sel" data-id="${page.id}" data-type="copy_status" onchange="onStatusChange(this)">
+          <option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option>
+        </select>
+        <select class="card-select img-sel" data-id="${page.id}" data-type="image_status" onchange="onStatusChange(this)">
+          <option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option>
+        </select>
+      </div>`;
+    card.addEventListener('click', e => {
+      if (e.target.tagName === 'SELECT') return;
+      openDetail(page.id, page.name, page.url);
+    });
+    list.appendChild(card);
+  });
+
+  col.appendChild(list);
+  grid.appendChild(col);
+});
+
+function applyState(id, flash = false) {
+  const s = state[id];
+  document.querySelectorAll(`[data-id="${id}"]`).forEach(sel => {
+    sel.value = s[sel.dataset.type];
+    styleSelect(sel);
+  });
+  if (flash) {
+    const card = document.getElementById('card-' + id);
+    if (card) { card.classList.remove('just-updated'); void card.offsetWidth; card.classList.add('just-updated'); }
+  }
+}
+
+function styleSelect(sel) {
+  const base = sel.dataset.type === 'copy_status' ? 'copy-sel' : 'img-sel';
+  sel.className = `card-select ${base}`;
+  if (sel.value === 'Complete')    sel.classList.add('status-done');
+  if (sel.value === 'In Progress') sel.classList.add('status-inprog');
+  if (sel.value === 'N/A')         sel.classList.add('status-na');
+}
+
+function updateStats() {
+  const total = ALL_IDS.length;
+  const copyDone = ALL_IDS.filter(id => state[id].copy_status === 'Complete').length;
+  const imgDone  = ALL_IDS.filter(id => state[id].image_status === 'Complete').length;
+  document.getElementById('total-pages').textContent = total;
+  document.getElementById('copy-done-count').textContent = copyDone;
+  document.getElementById('img-done-count').textContent = imgDone;
+  const cp = Math.round(copyDone / total * 100);
+  const ip = Math.round(imgDone  / total * 100);
+  document.getElementById('copy-bar').style.width = cp + '%';
+  document.getElementById('img-bar').style.width  = ip + '%';
+  document.getElementById('copy-pct').textContent = cp + '%';
+  document.getElementById('img-pct').textContent  = ip + '%';
+}
+
+function setSyncStatus(s, text) {
+  const el = document.getElementById('sync-status');
+  const dot = el.querySelector('.sync-dot');
+  el.className = s ? ('sync-status ' + s) : '';
+  document.getElementById('sync-text').textContent = text;
+  dot.className = 'sync-dot' + (s === 'syncing' ? ' pulse' : '');
+}
+
+let saveTimer = {};
+async function saveToDb(id) {
+  setSyncStatus('syncing', 'Saving…');
+  try {
+    const s = state[id];
+    await sbUpsert('page_status', [{
+      id, copy_status: s.copy_status, image_status: s.image_status,
+      copy_notes: s.copy_notes, image_notes: s.image_notes,
+      updated_by: userName || 'Anonymous', updated_at: new Date().toISOString()
+    }]);
+    setSyncStatus('saved', 'Saved ✓');
+    setTimeout(() => setSyncStatus('', 'Live'), 2000);
+  } catch(e) {
+    setSyncStatus('error', 'Error saving');
+    console.error(e);
+  }
+}
+
+function debounceSave(id) {
+  clearTimeout(saveTimer[id]);
+  saveTimer[id] = setTimeout(() => saveToDb(id), 600);
+}
+
+function onStatusChange(sel) {
+  const id = sel.dataset.id;
+  state[id][sel.dataset.type] = sel.value;
+  styleSelect(sel);
+  updateStats();
+  debounceSave(id);
+  if (currentId === id) {
+    document.getElementById(sel.dataset.type === 'copy_status' ? 'dp-copy' : 'dp-image').value = sel.value;
+  }
+}
+
+// Detail panel
+let currentId = null;
+function openDetail(id, name, url) {
+  currentId = id;
+  const s = state[id];
+  document.getElementById('dp-name').textContent = name;
+  document.getElementById('dp-url').textContent = url;
+  document.getElementById('dp-copy').value = s.copy_status;
+  document.getElementById('dp-image').value = s.image_status;
+  document.getElementById('dp-copy-notes').value = s.copy_notes;
+  document.getElementById('dp-image-notes').value = s.image_notes;
+  document.getElementById('dp-last-edited').textContent = s.updated_by
+    ? `Last edited by ${s.updated_by}${s.updated_at ? ' · ' + new Date(s.updated_at).toLocaleDateString() : ''}` : '';
+
+  // Show known images
+  const page = PAGE_MAP[id];
+  const imgContainer = document.getElementById('dp-known-images');
+  if (page && page.images && page.images.length > 0) {
+    imgContainer.innerHTML = `
+      <div class="known-images-title">🖼 Images on this page (${page.images.length})</div>
+      ${page.images.map(img => `
+        <div class="img-item">
+          <img class="img-thumb" src="${img.url}" onerror="this.style.display='none'" alt="">
+          <span class="img-name" title="${img.name}">${img.name}</span>
+        </div>`).join('')}`;
+  } else {
+    imgContainer.innerHTML = '<div style="font-size:0.72rem;color:#aaa;margin-top:8px">No images found in export for this page.</div>';
+  }
+
+  document.getElementById('detail-panel').style.display = 'block';
+  document.querySelectorAll('.page-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('card-' + id);
+  if (card) card.classList.add('selected');
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').style.display = 'none';
+  document.querySelectorAll('.page-card').forEach(c => c.classList.remove('selected'));
+  currentId = null;
+}
+
+function syncFromPanel(type) {
+  if (!currentId) return;
+  state[currentId][type] = document.getElementById(type === 'copy_status' ? 'dp-copy' : 'dp-image').value;
+  document.querySelectorAll(`[data-id="${currentId}"][data-type="${type}"]`).forEach(sel => {
+    sel.value = state[currentId][type]; styleSelect(sel);
+  });
+  updateStats();
+}
+
+function saveDetail() {
+  if (!currentId) return;
+  state[currentId].copy_status  = document.getElementById('dp-copy').value;
+  state[currentId].image_status = document.getElementById('dp-image').value;
+  state[currentId].copy_notes   = document.getElementById('dp-copy-notes').value;
+  state[currentId].image_notes  = document.getElementById('dp-image-notes').value;
+  applyState(currentId);
+  updateStats();
+  saveToDb(currentId);
+  closeDetail();
+}
+
+async function markAll(type, val) {
+  ALL_IDS.forEach(id => { state[id][type] = val; applyState(id); });
+  updateStats();
+  setSyncStatus('syncing', 'Saving all…');
+  try {
+    await sbUpsert('page_status', ALL_IDS.map(id => ({
+      id, copy_status: state[id].copy_status, image_status: state[id].image_status,
+      copy_notes: state[id].copy_notes, image_notes: state[id].image_notes,
+      updated_by: userName || 'Anonymous', updated_at: new Date().toISOString()
+    })));
+    setSyncStatus('saved', 'Saved ✓');
+    setTimeout(() => setSyncStatus('', 'Live'), 2000);
+  } catch(e) { setSyncStatus('error', 'Error'); }
+}
+
+async function resetAll() {
+  if (!confirm('Reset ALL statuses to Not Started for everyone?')) return;
+  ALL_IDS.forEach(id => { state[id].copy_status = 'Not Started'; state[id].image_status = 'Not Started'; applyState(id); });
+  updateStats();
+  setSyncStatus('syncing', 'Saving…');
+  try {
+    await sbUpsert('page_status', ALL_IDS.map(id => ({
+      id, copy_status: 'Not Started', image_status: 'Not Started',
+      copy_notes: state[id].copy_notes, image_notes: state[id].image_notes,
+      updated_by: userName || 'Anonymous', updated_at: new Date().toISOString()
+    })));
+    setSyncStatus('saved', 'Saved ✓');
+    setTimeout(() => setSyncStatus('', 'Live'), 2000);
+  } catch(e) { setSyncStatus('error', 'Error'); }
+}
+
+function exportCSV() {
+  const rows = [['Page ID','Page Name','URL','WP Status','Copy Status','Copy Notes','Image Status','Image Notes','Known Images','Last Updated By']];
+  ALL_IDS.forEach(id => {
+    const p = PAGE_MAP[id];
+    const s = state[id];
+    const imgs = p && p.images ? p.images.map(i=>i.name).join('; ') : '';
+    rows.push([id, p ? p.name : id, p ? p.url : '', p ? p.wpStatus : '', s.copy_status, s.copy_notes, s.image_status, s.image_notes, imgs, s.updated_by]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'mirror_image_content_status.csv';
+  a.click();
+}
+
+// Polling
+let lastSig = '';
+async function poll() {
+  try {
+    const rows = await sbGet('page_status');
+    const sig = JSON.stringify(rows);
+    if (sig !== lastSig) {
+      lastSig = sig;
+      rows.forEach(row => {
+        if (!state[row.id]) return;
+        const changed = state[row.id].copy_status !== row.copy_status || state[row.id].image_status !== row.image_status;
+        state[row.id] = { copy_status: row.copy_status, image_status: row.image_status,
+          copy_notes: row.copy_notes||'', image_notes: row.image_notes||'',
+          updated_by: row.updated_by||'', updated_at: row.updated_at||'' };
+        applyState(row.id, changed);
+      });
+      updateStats();
+    }
+  } catch(e) { console.warn('Poll error', e); }
+}
+
+// Init
+(async () => {
+  try {
+    const rows = await sbGet('page_status');
+    rows.forEach(row => {
+      if (state[row.id]) {
+        state[row.id] = { copy_status: row.copy_status, image_status: row.image_status,
+          copy_notes: row.copy_notes||'', image_notes: row.image_notes||'',
+          updated_by: row.updated_by||'', updated_at: row.updated_at||'' };
+      }
+    });
+    ALL_IDS.forEach(id => applyState(id));
+    updateStats();
+    setSyncStatus('saved', 'Live ✓');
+    setTimeout(() => setSyncStatus('', 'Live'), 1500);
+    lastSig = JSON.stringify(rows);
+  } catch(e) {
+    setSyncStatus('error', 'DB error — check Supabase setup');
+    console.error('Load failed:', e);
+  }
+  document.getElementById('loading').style.display = 'none';
+  document.querySelectorAll('.card-select').forEach(styleSelect);
+  setInterval(poll, 8000);
+})();
+</script>
+</body>
+</html>
