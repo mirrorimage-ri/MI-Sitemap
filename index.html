@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mirror Image Screen Printing — Site Map</title>
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -299,6 +301,48 @@
   #action-panel-toggle:hover{background:var(--accent);}
   #action-panel-toggle.shifted{left:400px;}
 
+
+  /* ── Google Drive Integration ── */
+  .drive-signin-bar{display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+  .drive-user-info{display:flex;align-items:center;gap:8px;font-size:.72rem;color:#ccc;}
+  .drive-avatar{width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,255,255,.2);}
+  .drive-btn{padding:5px 12px;border-radius:4px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:background .15s;}
+  .drive-btn.signin{background:#4285f4;color:white;}
+  .drive-btn.signin:hover{background:#3367d6;}
+  .drive-btn.signout{background:rgba(255,255,255,.1);color:#ccc;}
+  .drive-btn.signout:hover{background:rgba(255,255,255,.2);}
+  .drive-status{font-size:.65rem;color:#888;}
+
+  /* Images tab — Drive mode */
+  .drive-tab-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .drive-folder-info{font-size:.68rem;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;}
+  .drive-folder-info a{color:#90caf9;text-decoration:underline;}
+  .drive-upload-btn{background:var(--accent2);border:none;border-radius:4px;color:var(--ink);font-size:.72rem;font-weight:700;padding:5px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0;}
+  .drive-upload-btn:hover{background:#e09000;}
+  #drive-upload-input{display:none;}
+  .drive-sync-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:.68rem;color:#888;}
+  .drive-sync-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:3px;color:#ccc;font-size:.65rem;padding:3px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .drive-sync-btn:hover{background:rgba(255,255,255,.18);}
+
+  /* Drive image grid */
+  .drive-img-wrap{border:1px solid var(--light);border-radius:6px;overflow:hidden;background:#f5f5f5;position:relative;transition:box-shadow .15s;}
+  .drive-img-wrap:hover{box-shadow:0 4px 14px rgba(0,0,0,.15);}
+  .drive-img-wrap img{width:100%;height:80px;object-fit:cover;display:block;cursor:pointer;}
+  .drive-img-footer{background:white;padding:5px 7px;display:flex;align-items:center;gap:5px;}
+  .drive-img-name{flex:1;font-size:.58rem;color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;}
+  .drive-img-name[contenteditable=true]:focus{outline:1px solid var(--accent2);border-radius:2px;padding:0 2px;}
+  .drive-approval{font-size:.55rem;padding:1px 6px;border-radius:10px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;}
+  .drive-approval.pending{background:#fff3cd;color:#856404;}
+  .drive-approval.approved{background:#d4edda;color:#145a32;}
+  .drive-approval.revision{background:#f8d7da;color:#721c24;}
+  .drive-img-del{background:none;border:none;cursor:pointer;color:#ccc;font-size:.8rem;padding:0;flex-shrink:0;}
+  .drive-img-del:hover{color:var(--accent);}
+  .drive-not-signed-in{text-align:center;padding:24px 12px;color:#888;font-size:.78rem;line-height:1.6;}
+  .drive-not-signed-in button{margin-top:10px;background:#4285f4;color:white;border:none;border-radius:4px;padding:8px 18px;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;}
+  .drive-uploading{text-align:center;padding:16px;color:#aaa;font-size:.75rem;}
+  .drive-set-folder-btn{background:none;border:1px dashed rgba(255,255,255,.2);border-radius:4px;color:#aaa;font-size:.65rem;padding:3px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .drive-set-folder-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+
   @media print{header{position:static}#detail-panel,#name-banner,.controls{display:none!important}}
 </style>
 </head>
@@ -412,8 +456,10 @@
       <button class="add-section-btn" onclick="addDropdownSection()">+ Add Section</button>
     </div>
     <div class="tab-pane" id="tab-images">
-      <p style="font-size:.72rem;color:#888;margin-bottom:12px">Images from the WordPress media library. Click to enlarge.</p>
-      <div class="img-grid" id="dp-img-grid"></div>
+      <div id="drive-images-panel">
+        <!-- Drive sign-in prompt or image grid rendered by JS -->
+      </div>
+      <input type="file" id="drive-upload-input" multiple accept="image/*">
     </div>
   </div>
 </div>
@@ -872,22 +918,337 @@ function cancelAdd(si){const el=document.getElementById('inline-add-'+si);el.cla
 function confirmAddItem(id,si){const label=document.getElementById('add-label-'+si).value.trim();const url=document.getElementById('add-url-'+si).value.trim();if(!label) return;getDropdowns(id)[si].items.push({label,url:url||'#',status:'Not Started',note:''});debounceSave(id);renderDropdowns(id);}
 function addDropdownSection(){if(!currentId) return;getDropdowns(currentId).push({section:'New Section',items:[]});debounceSave(currentId);renderDropdowns(currentId);}
 
-// ── Images tab + Lightbox ──
-let lbImages=[],lbIndex=0;
-function renderImages(id){
-  const grid=document.getElementById('dp-img-grid');
-  const p=PAGE_MAP[id];
-  if(!p||!p.images||!p.images.length){grid.innerHTML='<div class="no-images-msg" style="grid-column:1/-1">No images found for this page.</div>';return;}
-  lbImages=p.images;
-  grid.innerHTML=p.images.map((img,i)=>`<div class="img-thumb-wrap" onclick="openLightbox(${i})"><img src="${img.url}" alt="${img.name}" onerror="this.parentElement.style.display='none'"><div class="img-thumb-name">${img.name}</div></div>`).join('');
+// ── Google Drive Integration ──────────────────────────────────────────────
+const GDRIVE_CLIENT_ID = '1095423557338-hit16nva2jed0najntmkrvr09d60mrm5.apps.googleusercontent.com';
+const GDRIVE_SCOPES = 'https://www.googleapis.com/auth/drive';
+const GDRIVE_MIME_FOLDER = 'application/vnd.google-apps.folder';
+const ROOT_FOLDER_NAME = 'Mirror Image Website';
+
+let driveSignedIn = false;
+let driveUser = null;
+let driveTokenClient = null;
+let driveAccessToken = null;
+let driveImageApprovals = JSON.parse(localStorage.getItem('mi_drive_approvals') || '{}');
+let pageFolderIds = JSON.parse(localStorage.getItem('mi_drive_folders') || '{}'); // pageId -> folderId
+
+function saveApprovals(){ localStorage.setItem('mi_drive_approvals', JSON.stringify(driveImageApprovals)); }
+function saveFolderIds(){ localStorage.setItem('mi_drive_folders', JSON.stringify(pageFolderIds)); }
+
+// Init Google Identity Services
+function initDriveAuth() {
+  if (!window.google) { setTimeout(initDriveAuth, 500); return; }
+  driveTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GDRIVE_CLIENT_ID,
+    scope: GDRIVE_SCOPES,
+    callback: (resp) => {
+      if (resp.error) { console.error('Drive auth error:', resp.error); return; }
+      driveAccessToken = resp.access_token;
+      driveSignedIn = true;
+      // Get user info
+      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: 'Bearer ' + driveAccessToken }
+      }).then(r=>r.json()).then(info=>{
+        driveUser = info;
+        updateDriveUI();
+        if (currentId) renderImages(currentId);
+      });
+    }
+  });
 }
-function openLightbox(i){lbIndex=i;document.getElementById('lb-img').src=lbImages[i].url;document.getElementById('lb-caption').textContent=lbImages[i].name;document.getElementById('lb-counter').textContent=`${i+1} of ${lbImages.length}`;document.getElementById('lightbox').classList.add('open');}
+
+function driveSignIn() {
+  if (!driveTokenClient) { alert('Google API still loading, please try again in a moment.'); return; }
+  driveTokenClient.requestAccessToken();
+}
+
+function driveSignOut() {
+  driveAccessToken = null; driveSignedIn = false; driveUser = null;
+  google.accounts.oauth2.revoke(driveAccessToken, ()=>{});
+  updateDriveUI();
+  if (currentId) renderImages(currentId);
+}
+
+function updateDriveUI() {
+  const bar = document.getElementById('drive-signin-bar');
+  const btn = document.getElementById('drive-signin-btn');
+  const txt = document.getElementById('drive-status-text');
+  if (!bar) return;
+  if (driveSignedIn && driveUser) {
+    txt.innerHTML = `<img class="drive-avatar" src="${driveUser.picture}" alt=""> ${driveUser.name}`;
+    btn.textContent = 'Disconnect';
+    btn.className = 'drive-btn signout';
+    btn.onclick = driveSignOut;
+  } else {
+    txt.textContent = 'Google Drive: Not connected';
+    btn.textContent = 'Connect Drive';
+    btn.className = 'drive-btn signin';
+    btn.onclick = driveSignIn;
+  }
+}
+
+// Drive API helpers
+async function driveGet(path, params={}) {
+  const url = new URL('https://www.googleapis.com/drive/v3/' + path);
+  Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
+  const r = await fetch(url, { headers: { Authorization: 'Bearer ' + driveAccessToken } });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function drivePost(path, body, params={}) {
+  const url = new URL('https://www.googleapis.com/drive/v3/' + path);
+  Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: 'Bearer '+driveAccessToken, 'Content-Type':'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+// Get or create a folder by name under a parent
+async function getOrCreateFolder(name, parentId=null) {
+  const q = parentId
+    ? `name='${name}' and mimeType='${GDRIVE_MIME_FOLDER}' and '${parentId}' in parents and trashed=false`
+    : `name='${name}' and mimeType='${GDRIVE_MIME_FOLDER}' and trashed=false`;
+  const res = await driveGet('files', { q, fields:'files(id,name)', spaces:'drive' });
+  if (res.files && res.files.length > 0) return res.files[0].id;
+  const body = { name, mimeType: GDRIVE_MIME_FOLDER };
+  if (parentId) body.parents = [parentId];
+  const created = await drivePost('files', body, { fields:'id' });
+  return created.id;
+}
+
+// Get or create page folder: Root/PageName
+async function getPageFolderId(pageId) {
+  if (pageFolderIds[pageId]) return pageFolderIds[pageId];
+  const p = PAGE_MAP[pageId];
+  const rootId = await getOrCreateFolder(ROOT_FOLDER_NAME);
+  const pageId2 = await getOrCreateFolder(p ? p.name : pageId, rootId);
+  pageFolderIds[pageId] = pageId2;
+  saveFolderIds();
+  return pageId2;
+}
+
+// List image files in a folder
+async function listDriveImages(folderId) {
+  const q = `'${folderId}' in parents and mimeType contains 'image/' and trashed=false`;
+  const res = await driveGet('files', {
+    q, fields:'files(id,name,thumbnailLink,webViewLink,webContentLink,mimeType,modifiedTime)',
+    orderBy:'name', spaces:'drive', pageSize:'100'
+  });
+  return res.files || [];
+}
+
+// Get thumbnail URL (authenticated)
+function driveThumbUrl(fileId) {
+  return `https://lh3.googleusercontent.com/d/${fileId}=w400`;
+}
+
+function driveViewUrl(fileId) {
+  return `https://drive.google.com/file/d/${fileId}/view`;
+}
+
+// Upload file to Drive folder
+async function uploadToDrive(file, folderId) {
+  const meta = { name: file.name, parents: [folderId] };
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(meta)], {type:'application/json'}));
+  form.append('file', file);
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,thumbnailLink,webViewLink,mimeType,modifiedTime', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + driveAccessToken },
+    body: form
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+// Rename file
+async function renameDriveFile(fileId, newName) {
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,name`, {
+    method: 'PATCH',
+    headers: { Authorization:'Bearer '+driveAccessToken, 'Content-Type':'application/json' },
+    body: JSON.stringify({ name: newName })
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+// Delete (trash) file
+async function trashDriveFile(fileId) {
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+    method: 'PATCH',
+    headers: { Authorization:'Bearer '+driveAccessToken, 'Content-Type':'application/json' },
+    body: JSON.stringify({ trashed: true })
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
+
+// ── Images Tab Rendering ──
+let lbImages=[], lbIndex=0;
+let drivePollingTimer=null;
+
+async function renderImages(id) {
+  const panel = document.getElementById('drive-images-panel');
+  if (!panel) return;
+
+  if (!driveSignedIn) {
+    panel.innerHTML = `
+      <div class="drive-not-signed-in">
+        <div style="font-size:1.5rem;margin-bottom:8px">☁️</div>
+        <strong>Connect Google Drive</strong><br>
+        Sign in to browse, upload, and manage<br>images for this page directly from Drive.
+        <br><button onclick="driveSignIn()">Connect Google Drive</button>
+        <div style="margin-top:14px;border-top:1px solid #eee;padding-top:12px">
+          <p style="font-size:.68rem;color:#aaa;margin-bottom:6px">WordPress images (read-only)</p>
+          <div class="img-grid">${renderWpImages(id)}</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  panel.innerHTML = '<div class="drive-uploading">Loading Drive images…</div>';
+  try {
+    const folderId = await getPageFolderId(id);
+    const files = await listDriveImages(folderId);
+    lbImages = files.map(f=>({ url: driveThumbUrl(f.id), name: f.name, id: f.id, viewUrl: driveViewUrl(f.id) }));
+
+    const p = PAGE_MAP[id];
+    const folderUrl = `https://drive.google.com/drive/folders/${folderId}`;
+
+    panel.innerHTML = `
+      <div class="drive-tab-header">
+        <div class="drive-folder-info">📁 <a href="${folderUrl}" target="_blank">Open in Drive</a></div>
+        <button class="drive-upload-btn" onclick="triggerUpload('${id}','${folderId}')">⬆ Upload</button>
+      </div>
+      <div class="drive-sync-row">
+        <span>${files.length} image${files.length!==1?'s':''}</span>
+        <button class="drive-sync-btn" onclick="renderImages('${id}')">↻ Refresh</button>
+      </div>
+      ${files.length===0 ? '<div class="drive-not-signed-in" style="padding:16px">No images yet. Upload some above.</div>' : ''}
+      <div class="img-grid">
+        ${files.map((f,i) => {
+          const approval = driveImageApprovals[f.id] || 'pending';
+          const aprLabel = approval==='approved'?'✓ Approved':approval==='revision'?'⚠ Needs Revision':'⬤ Pending';
+          return `<div class="drive-img-wrap">
+            <img src="${driveThumbUrl(f.id)}" alt="${f.name}" onclick="openLightbox(${i})"
+              onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'><rect fill=\'%23eee\' width=\'80\' height=\'80\'/>\<text x=\'50%\' y=\'55%\' text-anchor=\'middle\' fill=\'%23aaa\' font-size=\'11\'>${f.name.slice(-6)}</text></svg>'">
+            <div class="drive-img-footer">
+              <div class="drive-img-name" contenteditable="true"
+                onblur="handleRename('${f.id}',this.textContent.trim(),'${id}')"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+              >${f.name}</div>
+              <button class="drive-approval ${approval}" onclick="cycleApproval('${f.id}','${id}')">${aprLabel}</button>
+              <button class="drive-img-del" onclick="deleteDriveImage('${f.id}','${id}')" title="Delete">🗑</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+      ${renderWpImagesSection(id)}`;
+
+  } catch(e) {
+    console.error('Drive error:', e);
+    panel.innerHTML = `<div style="color:#e84033;font-size:.75rem;padding:12px">Drive error: ${e.message}<br><button class="drive-sync-btn" style="margin-top:8px" onclick="renderImages('${id}')">Retry</button></div>`;
+  }
+}
+
+function renderWpImages(id) {
+  const p = PAGE_MAP[id];
+  if (!p||!p.images||!p.images.length) return '<div class="no-images-msg">No WordPress images found.</div>';
+  return p.images.map((img,i)=>`<div class="img-thumb-wrap" onclick="openWpLightbox(${i},'${id}')"><img src="${img.url}" alt="${img.name}" onerror="this.parentElement.style.display='none'"><div class="img-thumb-name">${img.name}</div></div>`).join('');
+}
+
+function renderWpImagesSection(id) {
+  const p = PAGE_MAP[id];
+  if (!p||!p.images||!p.images.length) return '';
+  return `<div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px">
+    <p style="font-size:.68rem;color:#aaa;margin-bottom:8px">WordPress images (existing site)</p>
+    <div class="img-grid">${renderWpImages(id)}</div>
+  </div>`;
+}
+
+function openWpLightbox(i, id) {
+  const p = PAGE_MAP[id];
+  if (!p||!p.images) return;
+  lbImages = p.images.map(img=>({url:img.url,name:img.name}));
+  openLightbox(i);
+}
+
+function openLightbox(i) {
+  lbIndex=i;
+  const img=lbImages[i];
+  document.getElementById('lb-img').src=img.viewUrl||img.url;
+  document.getElementById('lb-caption').innerHTML=img.viewUrl
+    ? `${img.name} &nbsp;<a href="${img.viewUrl}" target="_blank" style="color:#90caf9;font-size:.75rem">Open in Drive ↗</a>`
+    : img.name;
+  document.getElementById('lb-counter').textContent=`${i+1} of ${lbImages.length}`;
+  document.getElementById('lightbox').classList.add('open');
+}
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
 function lbNav(dir){lbIndex=(lbIndex+dir+lbImages.length)%lbImages.length;openLightbox(lbIndex);}
 document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))closeLightbox();});
 document.addEventListener('keydown',e=>{
-  if(document.getElementById('lightbox').classList.contains('open')){if(e.key==='Escape')closeLightbox();if(e.key==='ArrowRight')lbNav(1);if(e.key==='ArrowLeft')lbNav(-1);}
+  if(document.getElementById('lightbox').classList.contains('open')){
+    if(e.key==='Escape')closeLightbox();
+    if(e.key==='ArrowRight')lbNav(1);
+    if(e.key==='ArrowLeft')lbNav(-1);
+  }
 });
+
+// Upload handler
+function triggerUpload(pageId, folderId) {
+  const input = document.getElementById('drive-upload-input');
+  input.onchange = async () => {
+    const files = [...input.files];
+    if (!files.length) return;
+    const panel = document.getElementById('drive-images-panel');
+    panel.innerHTML = `<div class="drive-uploading">Uploading ${files.length} file${files.length>1?'s':''}…</div>`;
+    try {
+      await Promise.all(files.map(f => uploadToDrive(f, folderId)));
+      await renderImages(pageId);
+    } catch(e) {
+      panel.innerHTML = `<div style="color:#e84033;padding:12px;font-size:.75rem">Upload failed: ${e.message}</div>`;
+    }
+    input.value = '';
+  };
+  input.click();
+}
+
+// Approval cycle
+function cycleApproval(fileId, pageId) {
+  const states = ['pending','approved','revision'];
+  const cur = driveImageApprovals[fileId] || 'pending';
+  driveImageApprovals[fileId] = states[(states.indexOf(cur)+1)%states.length];
+  saveApprovals();
+  renderImages(pageId);
+}
+
+// Rename
+async function handleRename(fileId, newName, pageId) {
+  if (!newName) return;
+  try {
+    await renameDriveFile(fileId, newName);
+  } catch(e) { console.error('Rename failed:', e); }
+}
+
+// Delete
+async function deleteDriveImage(fileId, pageId) {
+  if (!confirm('Move this image to Drive trash?')) return;
+  try {
+    await trashDriveFile(fileId);
+    await renderImages(pageId);
+  } catch(e) { alert('Delete failed: '+e.message); }
+}
+
+// Auto-refresh Drive images every 30s when images tab is open
+setInterval(() => {
+  if (currentId && currentTab === 'images' && driveSignedIn) renderImages(currentId);
+}, 30000);
+
+// Init Drive auth on load
+window.addEventListener('load', () => { setTimeout(initDriveAuth, 800); });
 
 // ── Bulk actions ──
 async function markAll(type,val){
@@ -1189,6 +1550,10 @@ function addActionItem() {
       <p>April 7, 2026 · Rick, Aimee, Jessica, Eliot</p>
     </div>
     <button class="ap-close" onclick="toggleActionPanel()">✕</button>
+  </div>
+  <div class="drive-signin-bar" id="drive-signin-bar">
+    <span class="drive-status" id="drive-status-text">Google Drive: Not connected</span>
+    <button class="drive-btn signin" id="drive-signin-btn" onclick="driveSignIn()">Connect Drive</button>
   </div>
   <div class="ap-tabs">
     <button class="ap-tab active" onclick="switchApTab('all',this)">All</button>
