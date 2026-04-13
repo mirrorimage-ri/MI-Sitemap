@@ -7,229 +7,261 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #0f0f0f; --paper: #f5f0e8; --accent: #e84033; --accent2: #f5a623;
-    --mid: #6b6b6b; --light: #ddd8ce; --card-bg: #ffffff; --done: #2d7a4f;
-    --shadow: 0 2px 12px rgba(0,0,0,0.10);
+    --ink:#0f0f0f; --paper:#f5f0e8; --accent:#e84033; --accent2:#f5a623;
+    --mid:#6b6b6b; --light:#ddd8ce; --card-bg:#ffffff; --done:#2d7a4f;
+    --shadow:0 2px 12px rgba(0,0,0,.10);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
 
-  header {
-    background: var(--ink); color: white; padding: 22px 40px 18px;
-    display: flex; align-items: flex-end; gap: 24px;
-    position: sticky; top: 0; z-index: 100; border-bottom: 4px solid var(--accent);
-  }
-  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 0.06em; line-height: 1; }
-  header .sub { font-size: 0.78rem; color: #aaa; letter-spacing: 0.04em; padding-bottom: 3px; }
-  .header-right { margin-left: auto; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-  .legend-pill { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #ccc; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .dot.done { background: #4caf7d; } .dot.inprog { background: var(--accent2); } .dot.notstarted { background: #888; }
+  header{background:var(--ink);color:white;padding:22px 40px 18px;display:flex;align-items:flex-end;gap:24px;position:sticky;top:0;z-index:100;border-bottom:4px solid var(--accent);}
+  header h1{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.06em;line-height:1;}
+  header .sub{font-size:.78rem;color:#aaa;letter-spacing:.04em;padding-bottom:3px;}
+  .header-right{margin-left:auto;display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+  .legend-pill{display:flex;align-items:center;gap:6px;font-size:.72rem;color:#ccc;}
+  .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .dot.done{background:#4caf7d;}.dot.inprog{background:var(--accent2);}.dot.notstarted{background:#888;}
+  #sync-status{display:flex;align-items:center;gap:6px;font-size:.72rem;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.08);color:#ccc;transition:all .3s;}
+  #sync-status.syncing{color:var(--accent2);}#sync-status.saved{color:#4caf7d;}#sync-status.error{color:#e84033;}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .sync-dot.pulse{animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  #name-banner{background:#1a1a2e;color:white;padding:10px 40px;display:flex;align-items:center;gap:12px;font-size:.82rem;}
+  #name-banner span{color:#aaa;}
+  #user-name-input{background:transparent;border:none;border-bottom:1px solid #444;color:white;font-family:'DM Sans',sans-serif;font-size:.82rem;padding:2px 4px;width:160px;outline:none;}
+  #user-name-input:focus{border-bottom-color:var(--accent2);}
+  main{max-width:1500px;margin:0 auto;padding:40px 24px 80px;}
 
-  #sync-status { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.08); color: #ccc; transition: all 0.3s; }
-  #sync-status.syncing { color: var(--accent2); } #sync-status.saved { color: #4caf7d; } #sync-status.error { color: #e84033; }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-  .sync-dot.pulse { animation: pulse 1s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  /* Home node */
+  .home-node-wrap{display:flex;flex-direction:column;align-items:center;}
+  .home-node{background:var(--ink);color:white;padding:18px 48px;border-radius:4px;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.08em;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s;border:2px solid transparent;}
+  .home-node:hover{transform:translateY(-2px);border-color:var(--accent);}
+  .home-node .url-tag{font-family:'DM Sans',sans-serif;font-size:.68rem;opacity:.5;font-weight:300;display:block;margin-top:4px;}
+  .status-bar{display:flex;gap:4px;margin-top:8px;justify-content:center;}
+  .v-connector{width:2px;height:36px;background:var(--light);margin:0 auto;}
 
-  #name-banner { background: #1a1a2e; color: white; padding: 10px 40px; display: flex; align-items: center; gap: 12px; font-size: 0.82rem; }
-  #name-banner span { color: #aaa; }
-  #user-name-input { background: transparent; border: none; border-bottom: 1px solid #444; color: white; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; padding: 2px 4px; width: 160px; outline: none; }
-  #user-name-input:focus { border-bottom-color: var(--accent2); }
+  /* Card selects */
+  .card-select{font-size:.6rem;border-radius:3px;padding:1px 4px;border:1px solid #ddd;background:white;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;color:var(--ink);flex:1;max-width:90px;appearance:none;text-align:center;}
+  .card-select.copy-sel{background:#eef3fb;border-color:#b8ccea;color:#1a3a7a;}
+  .card-select.img-sel{background:#fbeef5;border-color:#d8b0cc;color:#5a1a3a;}
+  .card-select.status-done{background:#d4edda;border-color:#88c9a0;color:#145a32;}
+  .card-select.status-inprog{background:#fff3cd;border-color:#f0c060;color:#7a5000;}
+  .card-select.status-na{background:#f0f0f0;border-color:#ccc;color:#666;}
 
-  main { max-width: 1400px; margin: 0 auto; padding: 40px 24px 80px; }
+  /* Grid */
+  .sections-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:0;}
+  .h-line-row{grid-column:1/-1;height:2px;background:var(--light);}
+  .section-col{display:flex;flex-direction:column;align-items:center;padding:0 6px;position:relative;}
+  .tick-down{width:2px;height:28px;background:var(--light);}
 
-  .home-node-wrap { display: flex; flex-direction: column; align-items: center; }
-  .home-node { background: var(--ink); color: white; padding: 18px 48px; border-radius: 4px; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.08em; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.15s; border: 2px solid transparent; }
-  .home-node:hover { transform: translateY(-2px); border-color: var(--accent); }
-  .home-node .url-tag { font-family: 'DM Sans', sans-serif; font-size: 0.68rem; opacity: 0.5; font-weight: 300; display: block; margin-top: 4px; }
-  .status-bar { display: flex; gap: 4px; margin-top: 8px; justify-content: center; }
-  .v-connector { width: 2px; height: 36px; background: var(--light); margin: 0 auto; }
+  /* Section header */
+  .section-header{background:var(--ink);border-left:4px solid var(--accent);padding:0;border-radius:3px;width:100%;box-shadow:var(--shadow);overflow:hidden;}
+  .section-header-inner{display:flex;align-items:center;gap:0;}
+  .section-name-input{flex:1;background:transparent;border:none;color:white;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.07em;padding:8px 10px;outline:none;cursor:pointer;min-width:0;}
+  .section-name-input:focus{background:rgba(255,255,255,.08);cursor:text;}
+  .section-action-btn{background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;padding:6px 7px;font-size:.85rem;transition:color .15s;flex-shrink:0;}
+  .section-action-btn:hover{color:white;}
+  .section-action-btn.del:hover{color:var(--accent);}
 
-  .card-select { font-size: 0.6rem; border-radius: 3px; padding: 1px 4px; border: 1px solid #ddd; background: white; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; color: var(--ink); flex: 1; max-width: 90px; appearance: none; text-align: center; }
-  .card-select.copy-sel  { background: #eef3fb; border-color: #b8ccea; color: #1a3a7a; }
-  .card-select.img-sel   { background: #fbeef5; border-color: #d8b0cc; color: #5a1a3a; }
-  .card-select.status-done   { background: #d4edda; border-color: #88c9a0; color: #145a32; }
-  .card-select.status-inprog { background: #fff3cd; border-color: #f0c060; color: #7a5000; }
-  .card-select.status-na     { background: #f0f0f0; border-color: #ccc; color: #666; }
+  .page-list{width:100%;display:flex;flex-direction:column;align-items:center;}
+  .page-connector-line{width:2px;height:12px;background:var(--light);}
 
-  .sections-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0; }
-  .h-line-row { grid-column: 1 / -1; height: 2px; background: var(--light); }
-  .section-col { display: flex; flex-direction: column; align-items: center; padding: 0 6px; }
-  .tick-down { width: 2px; height: 28px; background: var(--light); }
-  .section-header { background: var(--ink); color: white; border-left: 4px solid var(--accent); padding: 8px 12px; border-radius: 3px; width: 100%; font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.07em; text-align: center; box-shadow: var(--shadow); white-space: nowrap; }
-  .page-list { width: 100%; display: flex; flex-direction: column; align-items: center; }
-  .page-connector-line { width: 2px; height: 12px; background: var(--light); }
+  /* Page card */
+  .page-card{width:100%;background:var(--card-bg);border:1px solid var(--light);border-radius:4px;padding:9px 10px 8px;cursor:pointer;position:relative;transition:box-shadow .15s,transform .15s,border-color .15s;}
+  .page-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.13);transform:translateY(-1px);border-color:#bbb;z-index:10;}
+  .page-card.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);}
+  .page-card.just-updated{animation:flashUpdate 1.2s ease;}
+  @keyframes flashUpdate{0%{background:#fffde7}100%{background:white}}
+  .page-name{font-size:.78rem;font-weight:600;color:var(--ink);line-height:1.2;}
+  .page-url{font-size:.62rem;color:var(--mid);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .chips{display:flex;gap:3px;margin-top:6px;}
+  .img-badge{position:absolute;top:6px;right:6px;background:#f3e5f5;color:#7b1fa2;border:1px solid #ce93d8;font-size:.55rem;padding:1px 5px;border-radius:10px;font-weight:700;}
+  .draft-badge{position:absolute;top:6px;right:6px;background:#fff3cd;color:#856404;border:1px solid #ffc107;font-size:.55rem;padding:1px 5px;border-radius:10px;font-weight:700;}
+  .dropdown-badge{position:absolute;bottom:6px;right:6px;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;font-size:.55rem;padding:1px 5px;border-radius:10px;font-weight:700;}
+  .new-badge{position:absolute;top:6px;left:6px;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;font-size:.55rem;padding:1px 5px;border-radius:10px;font-weight:700;}
 
-  .page-card { width: 100%; background: var(--card-bg); border: 1px solid var(--light); border-radius: 4px; padding: 9px 10px 8px; cursor: pointer; position: relative; transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s; }
-  .page-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.13); transform: translateY(-1px); border-color: #bbb; z-index: 10; }
-  .page-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
-  .page-card.just-updated { animation: flashUpdate 1.2s ease; }
-  @keyframes flashUpdate { 0%{background:#fffde7} 100%{background:white} }
-  .page-name { font-size: 0.78rem; font-weight: 600; color: var(--ink); line-height: 1.2; }
-  .page-url { font-size: 0.62rem; color: var(--mid); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .chips { display: flex; gap: 3px; margin-top: 6px; }
-  .img-badge { position: absolute; top: 6px; right: 6px; background: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; font-size: 0.55rem; padding: 1px 5px; border-radius: 10px; font-weight: 700; }
-  .draft-badge { position: absolute; top: 6px; right: 6px; background: #fff3cd; color: #856404; border: 1px solid #ffc107; font-size: 0.55rem; padding: 1px 5px; border-radius: 10px; font-weight: 700; }
-  .dropdown-badge { position: absolute; bottom: 6px; right: 6px; background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; font-size: 0.55rem; padding: 1px 5px; border-radius: 10px; font-weight: 700; }
+  /* Add page / add section buttons */
+  .add-page-btn{width:100%;background:none;border:1.5px dashed #ccc;border-radius:4px;padding:7px 6px;font-size:.7rem;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:border-color .15s,color .15s;margin-top:0;}
+  .add-page-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+  .add-section-col{display:flex;flex-direction:column;align-items:center;padding:0 6px;}
+  .add-section-btn-main{background:none;border:2px dashed var(--light);border-radius:4px;padding:14px 10px;font-size:.75rem;color:#aaa;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;width:100%;transition:border-color .15s,color .15s;white-space:nowrap;}
+  .add-section-btn-main:hover{border-color:var(--accent2);color:var(--accent2);}
 
   /* ── Detail Panel ── */
-  #detail-panel {
-    display: none; position: fixed; right: 0; top: 0; bottom: 0; width: 380px;
-    background: white; border-left: 4px solid var(--accent);
-    box-shadow: -4px 0 32px rgba(0,0,0,0.18); z-index: 300;
-    display: none; flex-direction: column;
-    animation: slideInRight 0.22s ease;
-  }
-  #detail-panel.open { display: flex; }
-  @keyframes slideInRight { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:none} }
+  #detail-panel{display:none;position:fixed;right:0;top:0;bottom:0;width:390px;background:white;border-left:4px solid var(--accent);box-shadow:-4px 0 32px rgba(0,0,0,.18);z-index:300;flex-direction:column;animation:slideInRight .2s ease;}
+  #detail-panel.open{display:flex;}
+  @keyframes slideInRight{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+  .dp-header{background:var(--ink);color:white;padding:16px 20px 14px;flex-shrink:0;position:relative;}
+  .dp-header .dp-name-row{display:flex;align-items:center;gap:8px;}
+  .dp-name-input{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:4px;color:white;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.05em;padding:4px 8px;outline:none;}
+  .dp-name-input:focus{background:rgba(255,255,255,.18);border-color:var(--accent2);}
+  .dp-url-input{display:block;width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:3px;color:#90caf9;font-size:.7rem;padding:4px 7px;margin-top:6px;font-family:'DM Sans',sans-serif;outline:none;}
+  .dp-url-input:focus{border-color:var(--accent2);background:rgba(255,255,255,.15);}
+  .dp-header .dp-wp-status{font-size:.62rem;margin-top:6px;display:inline-block;padding:2px 8px;border-radius:10px;font-weight:600;cursor:pointer;}
+  .dp-header .dp-wp-status.publish{background:#d4edda;color:#145a32;}
+  .dp-header .dp-wp-status.draft{background:#fff3cd;color:#856404;}
+  .dp-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#aaa;}
+  .dp-close:hover{color:white;}
+  .dp-delete-btn{background:rgba(232,64,51,.15);border:1px solid rgba(232,64,51,.3);color:#ff8a80;border-radius:3px;padding:3px 8px;font-size:.68rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;}
+  .dp-delete-btn:hover{background:var(--accent);color:white;border-color:var(--accent);}
 
-  .dp-header { background: var(--ink); color: white; padding: 16px 20px 14px; flex-shrink: 0; }
-  .dp-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.05em; }
-  .dp-header .dp-url { font-size: 0.68rem; color: #90caf9; text-decoration: underline; word-break: break-all; margin-top: 3px; display: block; }
-  .dp-header .dp-wp-status { font-size: 0.62rem; margin-top: 5px; display: inline-block; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
-  .dp-header .dp-wp-status.publish { background: #d4edda; color: #145a32; }
-  .dp-header .dp-wp-status.draft   { background: #fff3cd; color: #856404; }
-
-  .dp-close { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #aaa; z-index: 10; }
-  .dp-close:hover { color: white; }
-
-  /* Tab nav */
-  .dp-tabs { display: flex; background: #f5f5f5; border-bottom: 2px solid var(--light); flex-shrink: 0; }
-  .dp-tab { flex: 1; padding: 10px 6px; font-size: 0.72rem; font-weight: 600; text-align: center; cursor: pointer; border: none; background: none; color: var(--mid); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; letter-spacing: 0.03em; }
-  .dp-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: white; }
-  .dp-tab:hover:not(.active) { color: var(--ink); }
-
-  .dp-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
-
-  /* Tab panes */
-  .tab-pane { display: none; }
-  .tab-pane.active { display: block; }
+  .dp-tabs{display:flex;background:#f5f5f5;border-bottom:2px solid var(--light);flex-shrink:0;}
+  .dp-tab{flex:1;padding:10px 6px;font-size:.72rem;font-weight:600;text-align:center;cursor:pointer;border:none;background:none;color:var(--mid);border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;}
+  .dp-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:white;}
+  .dp-tab:hover:not(.active){color:var(--ink);}
+  .dp-body{flex:1;overflow-y:auto;padding:16px 18px;}
+  .tab-pane{display:none;}.tab-pane.active{display:block;}
 
   /* Status tab */
-  .dp-field { margin-bottom: 14px; }
-  .dp-field label { display: block; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mid); margin-bottom: 5px; }
-  .dp-field select, .dp-field textarea, .dp-field input[type=text] { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; border: 1px solid #ddd; border-radius: 4px; padding: 7px 9px; color: var(--ink); }
-  .dp-field textarea { height: 58px; resize: vertical; }
-  .dp-field select:focus, .dp-field textarea:focus, .dp-field input:focus { outline: none; border-color: var(--accent); }
-  .save-btn { width: 100%; background: var(--accent); color: white; border: none; border-radius: 4px; padding: 10px; font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 0.07em; cursor: pointer; margin-top: 4px; transition: background 0.15s; }
-  .save-btn:hover { background: #c0392b; }
-  .last-edited { font-size: 0.63rem; color: #aaa; margin-top: 8px; text-align: center; }
+  .dp-field{margin-bottom:14px;}
+  .dp-field label{display:block;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);margin-bottom:5px;}
+  .dp-field select,.dp-field textarea,.dp-field input[type=text]{width:100%;font-family:'DM Sans',sans-serif;font-size:.82rem;border:1px solid #ddd;border-radius:4px;padding:7px 9px;color:var(--ink);}
+  .dp-field textarea{height:58px;resize:vertical;}
+  .dp-field select:focus,.dp-field textarea:focus,.dp-field input:focus{outline:none;border-color:var(--accent);}
+  .save-btn{width:100%;background:var(--accent);color:white;border:none;border-radius:4px;padding:10px;font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.07em;cursor:pointer;margin-top:4px;transition:background .15s;}
+  .save-btn:hover{background:#c0392b;}
+  .last-edited{font-size:.63rem;color:#aaa;margin-top:8px;text-align:center;}
 
   /* Dropdowns tab */
-  .dropdown-section { margin-bottom: 18px; border: 1px solid var(--light); border-radius: 6px; overflow: hidden; }
-  .dropdown-section-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: #f9f7f3; cursor: pointer; user-select: none; }
-  .dropdown-section-header span { font-size: 0.78rem; font-weight: 600; color: var(--ink); }
-  .dropdown-section-header .toggle-icon { font-size: 0.7rem; color: var(--mid); transition: transform 0.2s; }
-  .dropdown-section-header.collapsed .toggle-icon { transform: rotate(-90deg); }
-  .dropdown-items { padding: 8px 10px 10px; }
-  .dropdown-items.hidden { display: none; }
-
-  .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 6px; background: white; }
-  .dropdown-item:last-child { margin-bottom: 0; }
-  .dropdown-item-label { flex: 1; font-size: 0.78rem; font-weight: 500; color: var(--ink); }
-  .dropdown-item-url { font-size: 0.62rem; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
-  .item-status-select { font-size: 0.62rem; border-radius: 3px; padding: 2px 5px; border: 1px solid #ddd; background: #f5f5f5; cursor: pointer; font-family: 'DM Sans', sans-serif; appearance: none; text-align: center; min-width: 80px; }
-  .item-status-select.s-done   { background: #d4edda; border-color: #88c9a0; color: #145a32; }
-  .item-status-select.s-inprog { background: #fff3cd; border-color: #f0c060; color: #7a5000; }
-  .item-status-select.s-na     { background: #f0f0f0; border-color: #ccc; color: #666; }
-
-  .add-dropdown-btn { width: 100%; background: none; border: 1.5px dashed #ccc; border-radius: 4px; padding: 6px; font-size: 0.72rem; color: var(--mid); cursor: pointer; margin-top: 6px; font-family: 'DM Sans', sans-serif; transition: border-color 0.15s, color 0.15s; }
-  .add-dropdown-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* Item notes */
-  .dropdown-item { flex-wrap: wrap; }
-  .item-note-toggle { background: none; border: none; cursor: pointer; font-size: 0.82rem; color: #ccc; padding: 0 2px; flex-shrink: 0; line-height: 1; transition: color 0.15s; title: attr(title); }
-  .item-note-toggle:hover { color: var(--accent2); }
-  .item-note-toggle.has-note { color: var(--accent2); }
-  .item-note-row { display: none; width: 100%; padding: 5px 2px 2px; }
-  .item-note-row.open { display: block; }
-  .item-note-input { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 0.75rem; border: 1px solid #e0e0e0; border-radius: 4px; padding: 6px 8px; color: var(--ink); resize: vertical; min-height: 52px; background: #fafafa; transition: border-color 0.15s; }
-  .item-note-input:focus { outline: none; border-color: var(--accent2); background: white; }
-
-  .add-section-btn { width: 100%; background: none; border: 1.5px dashed var(--light); border-radius: 6px; padding: 9px; font-size: 0.75rem; color: var(--mid); cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; transition: border-color 0.15s, color 0.15s; margin-top: 4px; }
-  .add-section-btn:hover { border-color: var(--accent2); color: var(--accent2); }
-
-  /* Inline add form */
-  .inline-add { display: none; padding: 8px; background: #f9f7f3; border-top: 1px solid #eee; }
-  .inline-add.visible { display: block; }
-  .inline-add input { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; border: 1px solid #ddd; border-radius: 4px; padding: 5px 8px; margin-bottom: 5px; }
-  .inline-add-row { display: flex; gap: 5px; }
-  .inline-add-row button { flex: 1; padding: 5px; font-size: 0.72rem; border-radius: 3px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; }
-  .inline-add-row .btn-confirm { background: var(--accent); color: white; }
-  .inline-add-row .btn-cancel  { background: #eee; color: #555; }
-
-  /* Section name edit */
-  .section-name-edit { font-size: 0.72rem; background: none; border: none; border-bottom: 1px solid transparent; font-family: 'DM Sans', sans-serif; font-weight: 600; color: var(--ink); cursor: text; padding: 0; }
-  .section-name-edit:focus { outline: none; border-bottom-color: var(--accent); background: white; }
+  .dropdown-section{margin-bottom:18px;border:1px solid var(--light);border-radius:6px;overflow:hidden;}
+  .dropdown-section-header{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#f9f7f3;cursor:pointer;user-select:none;}
+  .dropdown-section-header .toggle-icon{font-size:.7rem;color:var(--mid);transition:transform .2s;}
+  .dropdown-section-header.collapsed .toggle-icon{transform:rotate(-90deg);}
+  .dropdown-items{padding:8px 10px 10px;}
+  .dropdown-items.hidden{display:none;}
+  .dropdown-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #eee;border-radius:4px;margin-bottom:6px;background:white;flex-wrap:wrap;}
+  .dropdown-item:last-child{margin-bottom:0;}
+  .dropdown-item-label{flex:1;font-size:.78rem;font-weight:500;color:var(--ink);}
+  .dropdown-item-url{font-size:.62rem;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px;}
+  .item-status-select{font-size:.62rem;border-radius:3px;padding:2px 5px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-family:'DM Sans',sans-serif;appearance:none;text-align:center;min-width:80px;}
+  .item-status-select.s-done{background:#d4edda;border-color:#88c9a0;color:#145a32;}
+  .item-status-select.s-inprog{background:#fff3cd;border-color:#f0c060;color:#7a5000;}
+  .item-status-select.s-na{background:#f0f0f0;border-color:#ccc;color:#666;}
+  .item-note-toggle{background:none;border:none;cursor:pointer;font-size:.82rem;color:#ccc;padding:0 2px;flex-shrink:0;line-height:1;transition:color .15s;}
+  .item-note-toggle:hover{color:var(--accent2);}
+  .item-note-toggle.has-note{color:var(--accent2);}
+  .item-note-row{display:none;width:100%;padding:5px 2px 2px;}
+  .item-note-row.open{display:block;}
+  .item-note-input{width:100%;font-family:'DM Sans',sans-serif;font-size:.75rem;border:1px solid #e0e0e0;border-radius:4px;padding:6px 8px;color:var(--ink);resize:vertical;min-height:52px;background:#fafafa;transition:border-color .15s;}
+  .item-note-input:focus{outline:none;border-color:var(--accent2);background:white;}
+  .add-dropdown-btn{width:100%;background:none;border:1.5px dashed #ccc;border-radius:4px;padding:6px;font-size:.72rem;color:var(--mid);cursor:pointer;margin-top:6px;font-family:'DM Sans',sans-serif;transition:border-color .15s,color .15s;}
+  .add-dropdown-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .add-section-btn{width:100%;background:none;border:1.5px dashed var(--light);border-radius:6px;padding:9px;font-size:.75rem;color:var(--mid);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:border-color .15s,color .15s;margin-top:4px;}
+  .add-section-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+  .inline-add{display:none;padding:8px;background:#f9f7f3;border-top:1px solid #eee;}
+  .inline-add.visible{display:block;}
+  .inline-add input{width:100%;font-family:'DM Sans',sans-serif;font-size:.78rem;border:1px solid #ddd;border-radius:4px;padding:5px 8px;margin-bottom:5px;}
+  .inline-add-row{display:flex;gap:5px;}
+  .inline-add-row button{flex:1;padding:5px;font-size:.72rem;border-radius:3px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;}
+  .inline-add-row .btn-confirm{background:var(--accent);color:white;}
+  .inline-add-row .btn-cancel{background:#eee;color:#555;}
+  .section-name-edit{font-size:.72rem;background:none;border:none;border-bottom:1px solid transparent;font-family:'DM Sans',sans-serif;font-weight:600;color:var(--ink);cursor:text;padding:0;}
+  .section-name-edit:focus{outline:none;border-bottom-color:var(--accent);background:white;}
 
   /* Images tab */
-  .img-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 4px; }
-  .img-thumb-wrap { border: 1px solid var(--light); border-radius: 4px; overflow: hidden; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; background: #f5f5f5; }
-  .img-thumb-wrap:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-  .img-thumb-wrap img { width: 100%; height: 80px; object-fit: cover; display: block; }
-  .img-thumb-name { font-size: 0.58rem; color: #666; padding: 4px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: white; }
-  .no-images-msg { font-size: 0.75rem; color: #aaa; text-align: center; padding: 20px 0; }
+  .img-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px;}
+  .img-thumb-wrap{border:1px solid var(--light);border-radius:4px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;background:#f5f5f5;}
+  .img-thumb-wrap:hover{transform:scale(1.02);box-shadow:0 4px 12px rgba(0,0,0,.15);}
+  .img-thumb-wrap img{width:100%;height:80px;object-fit:cover;display:block;}
+  .img-thumb-name{font-size:.58rem;color:#666;padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:white;}
+  .no-images-msg{font-size:.75rem;color:#aaa;text-align:center;padding:20px 0;}
 
-  /* ── Lightbox ── */
-  #lightbox { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.92); align-items: center; justify-content: center; flex-direction: column; }
-  #lightbox.open { display: flex; }
-  #lightbox img { max-width: 90vw; max-height: 80vh; object-fit: contain; border-radius: 4px; box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
-  #lightbox .lb-caption { color: #ccc; font-size: 0.8rem; margin-top: 12px; text-align: center; max-width: 80vw; }
-  #lightbox .lb-close { position: absolute; top: 20px; right: 28px; color: white; font-size: 2rem; cursor: pointer; background: none; border: none; line-height: 1; }
-  #lightbox .lb-close:hover { color: var(--accent); }
-  #lightbox .lb-nav { display: flex; gap: 16px; margin-top: 16px; }
-  #lightbox .lb-nav button { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-size: 0.82rem; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
-  #lightbox .lb-nav button:hover { background: rgba(255,255,255,0.25); }
-  #lightbox .lb-counter { color: #aaa; font-size: 0.72rem; margin-top: 8px; }
+  /* Lightbox */
+  #lightbox{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.92);align-items:center;justify-content:center;flex-direction:column;}
+  #lightbox.open{display:flex;}
+  #lightbox img{max-width:90vw;max-height:80vh;object-fit:contain;border-radius:4px;box-shadow:0 8px 40px rgba(0,0,0,.6);}
+  #lightbox .lb-caption{color:#ccc;font-size:.8rem;margin-top:12px;text-align:center;max-width:80vw;}
+  #lightbox .lb-close{position:absolute;top:20px;right:28px;color:white;font-size:2rem;cursor:pointer;background:none;border:none;line-height:1;}
+  #lightbox .lb-close:hover{color:var(--accent);}
+  #lightbox .lb-nav{display:flex;gap:16px;margin-top:16px;}
+  #lightbox .lb-nav button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;padding:8px 20px;border-radius:4px;cursor:pointer;font-size:.82rem;font-family:'DM Sans',sans-serif;transition:background .15s;}
+  #lightbox .lb-nav button:hover{background:rgba(255,255,255,.25);}
+  #lightbox .lb-counter{color:#aaa;font-size:.72rem;margin-top:8px;}
 
   /* Stats */
-  .stats-bar { display: flex; gap: 24px; margin-bottom: 32px; padding: 14px 20px; background: white; border: 1px solid var(--light); border-radius: 6px; box-shadow: var(--shadow); flex-wrap: wrap; }
-  .stat-item { text-align: center; }
-  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; line-height: 1; color: var(--ink); }
-  .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mid); margin-top: 2px; }
-  .stat-divider { width: 1px; background: var(--light); align-self: stretch; }
-  .progress-track { flex: 1; min-width: 160px; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
-  .prog-row { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; }
-  .prog-label { width: 44px; color: var(--mid); font-weight: 500; }
-  .prog-bar-bg { flex: 1; height: 6px; background: var(--light); border-radius: 3px; overflow: hidden; }
-  .prog-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
-  .prog-bar-fill.copy-fill  { background: #3a7bd5; }
-  .prog-bar-fill.image-fill { background: #a855c8; }
-  .prog-pct { width: 28px; text-align: right; color: var(--ink); font-weight: 600; }
+  .stats-bar{display:flex;gap:24px;margin-bottom:32px;padding:14px 20px;background:white;border:1px solid var(--light);border-radius:6px;box-shadow:var(--shadow);flex-wrap:wrap;}
+  .stat-item{text-align:center;}
+  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1;color:var(--ink);}
+  .stat-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mid);margin-top:2px;}
+  .stat-divider{width:1px;background:var(--light);align-self:stretch;}
+  .progress-track{flex:1;min-width:160px;display:flex;flex-direction:column;gap:6px;justify-content:center;}
+  .prog-row{display:flex;align-items:center;gap:8px;font-size:.7rem;}
+  .prog-label{width:44px;color:var(--mid);font-weight:500;}
+  .prog-bar-bg{flex:1;height:6px;background:var(--light);border-radius:3px;overflow:hidden;}
+  .prog-bar-fill{height:100%;border-radius:3px;transition:width .4s ease;}
+  .prog-bar-fill.copy-fill{background:#3a7bd5;}
+  .prog-bar-fill.image-fill{background:#a855c8;}
+  .prog-pct{width:28px;text-align:right;color:var(--ink);font-weight:600;}
 
-  .controls { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
-  .ctrl-btn { padding: 7px 16px; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--ink); background: white; transition: background 0.15s, color 0.15s; }
-  .ctrl-btn:hover { background: var(--ink); color: white; }
-  .ctrl-btn.primary { background: var(--ink); color: white; }
-  .ctrl-btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+  .controls{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;}
+  .ctrl-btn{padding:7px 16px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;border:1.5px solid var(--ink);background:white;transition:background .15s,color .15s;}
+  .ctrl-btn:hover{background:var(--ink);color:white;}
+  .ctrl-btn.primary{background:var(--ink);color:white;}
+  .ctrl-btn.primary:hover{background:var(--accent);border-color:var(--accent);}
 
-  #loading { position: fixed; inset: 0; background: rgba(15,15,15,0.88); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; color: white; gap: 16px; }
-  #loading h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.08em; }
-  #loading p { font-size: 0.85rem; color: #aaa; }
-  .spinner { width: 36px; height: 36px; border: 3px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @media print { header{position:static} #detail-panel,#name-banner,.controls{display:none!important} }
+  /* Modal for add page / add section */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:white;border-radius:8px;padding:28px;width:380px;box-shadow:0 12px 40px rgba(0,0,0,.25);}
+  .modal h4{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.05em;margin-bottom:16px;color:var(--ink);}
+  .modal-field{margin-bottom:14px;}
+  .modal-field label{display:block;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);margin-bottom:5px;}
+  .modal-field input,.modal-field select{width:100%;font-family:'DM Sans',sans-serif;font-size:.85rem;border:1px solid #ddd;border-radius:4px;padding:8px 10px;color:var(--ink);}
+  .modal-field input:focus,.modal-field select:focus{outline:none;border-color:var(--accent);}
+  .modal-actions{display:flex;gap:10px;margin-top:18px;}
+  .modal-actions button{flex:1;padding:9px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:none;}
+  .modal-confirm{background:var(--accent);color:white;}
+  .modal-confirm:hover{background:#c0392b;}
+  .modal-cancel{background:#eee;color:#555;}
+  .modal-cancel:hover{background:#ddd;}
+
+  #loading{position:fixed;inset:0;background:rgba(15,15,15,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;color:white;gap:16px;}
+  #loading h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.08em;}
+  #loading p{font-size:.85rem;color:#aaa;}
+  .spinner{width:36px;height:36px;border:3px solid #333;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media print{header{position:static}#detail-panel,#name-banner,.controls{display:none!important}}
 </style>
 </head>
 <body>
 
-<div id="loading">
-  <div class="spinner"></div>
-  <h2>Loading Sitemap</h2>
-  <p>Connecting to database…</p>
-</div>
+<div id="loading"><div class="spinner"></div><h2>Loading Sitemap</h2><p>Connecting to database…</p></div>
 
 <!-- Lightbox -->
 <div id="lightbox">
   <button class="lb-close" onclick="closeLightbox()">✕</button>
   <img id="lb-img" src="" alt="">
   <div class="lb-caption" id="lb-caption"></div>
-  <div class="lb-nav">
-    <button onclick="lbNav(-1)">← Prev</button>
-    <button onclick="lbNav(1)">Next →</button>
-  </div>
+  <div class="lb-nav"><button onclick="lbNav(-1)">← Prev</button><button onclick="lbNav(1)">Next →</button></div>
   <div class="lb-counter" id="lb-counter"></div>
+</div>
+
+<!-- Add Page Modal -->
+<div class="modal-overlay" id="add-page-modal">
+  <div class="modal">
+    <h4>Add New Page</h4>
+    <div class="modal-field"><label>Page Name</label><input type="text" id="new-page-name" placeholder="e.g. Shop"></div>
+    <div class="modal-field"><label>URL (relative)</label><input type="text" id="new-page-url" placeholder="e.g. /shop/"></div>
+    <div class="modal-field"><label>Status</label>
+      <select id="new-page-status"><option value="publish">Published</option><option value="draft">Draft</option><option value="planned">Planned</option></select>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('add-page-modal')">Cancel</button>
+      <button class="modal-confirm" onclick="confirmAddPage()">Add Page</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Section Modal -->
+<div class="modal-overlay" id="add-section-modal">
+  <div class="modal">
+    <h4>Add New Section</h4>
+    <div class="modal-field"><label>Section Name</label><input type="text" id="new-section-name" placeholder="e.g. Shop"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('add-section-modal')">Cancel</button>
+      <button class="modal-confirm" onclick="confirmAddSection()">Add Section</button>
+    </div>
+  </div>
 </div>
 
 <header>
@@ -260,7 +292,7 @@
   </div>
 
   <div class="stats-bar">
-    <div class="stat-item"><div class="stat-num" id="total-pages">19</div><div class="stat-label">Total Pages</div></div>
+    <div class="stat-item"><div class="stat-num" id="total-pages">—</div><div class="stat-label">Total Pages</div></div>
     <div class="stat-divider"></div>
     <div class="stat-item"><div class="stat-num" id="copy-done-count" style="color:var(--done)">0</div><div class="stat-label">Copy Done</div></div>
     <div class="stat-item"><div class="stat-num" id="img-done-count" style="color:#a855c8">0</div><div class="stat-label">Images Done</div></div>
@@ -283,13 +315,16 @@
   <div class="sections-grid" id="sections-grid"><div class="h-line-row"></div></div>
 </main>
 
-<!-- Detail Panel (full-height sidebar) -->
+<!-- Detail Panel -->
 <div id="detail-panel">
   <button class="dp-close" onclick="closeDetail()">✕</button>
   <div class="dp-header">
-    <h3 id="dp-name"></h3>
-    <a class="dp-url" id="dp-url" target="_blank"></a>
-    <span class="dp-wp-status" id="dp-wp-status"></span>
+    <div class="dp-name-row">
+      <input class="dp-name-input" id="dp-name" placeholder="Page name" onchange="updatePageMeta()">
+      <button class="dp-delete-btn" onclick="deletePage()">Delete</button>
+    </div>
+    <input class="dp-url-input" id="dp-url-input" placeholder="https://…" onchange="updatePageMeta()">
+    <span class="dp-wp-status" id="dp-wp-status" onclick="cycleWpStatus()"></span>
   </div>
   <div class="dp-tabs">
     <button class="dp-tab active" onclick="switchTab('status',this)">Status</button>
@@ -297,7 +332,6 @@
     <button class="dp-tab" onclick="switchTab('images',this)">Images</button>
   </div>
   <div class="dp-body">
-    <!-- Status tab -->
     <div class="tab-pane active" id="tab-status">
       <div class="dp-field"><label>Copy Status</label>
         <select id="dp-copy" onchange="syncFromPanel('copy_status')"><option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option></select></div>
@@ -308,450 +342,415 @@
       <button class="save-btn" onclick="saveDetail()">Save</button>
       <div class="last-edited" id="dp-last-edited"></div>
     </div>
-
-    <!-- Dropdowns tab -->
     <div class="tab-pane" id="tab-dropdowns">
-      <p style="font-size:0.72rem;color:#888;margin-bottom:14px;line-height:1.5">Track navigation dropdowns, CTAs, and interactive menus on this page. Add sections (e.g. "Main Nav", "Hero CTAs") and items within each.</p>
+      <p style="font-size:.72rem;color:#888;margin-bottom:14px;line-height:1.5">Track navigation dropdowns, CTAs, and interactive menus. Add sections and items.</p>
       <div id="dropdown-sections-list"></div>
       <button class="add-section-btn" onclick="addDropdownSection()">+ Add Section</button>
     </div>
-
-    <!-- Images tab -->
     <div class="tab-pane" id="tab-images">
-      <p style="font-size:0.72rem;color:#888;margin-bottom:12px">Images from the WordPress media library attached to this page. Click any image to enlarge.</p>
+      <p style="font-size:.72rem;color:#888;margin-bottom:12px">Images from the WordPress media library. Click to enlarge.</p>
       <div class="img-grid" id="dp-img-grid"></div>
     </div>
   </div>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://gslrukaitvxmxmwzbbqx.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbHJ1a2FpdHZ4bXhtd3piYnF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NDE1NjUsImV4cCI6MjA5MTMxNzU2NX0.2x-zk7UjgwGEIll-T_PXMDAo1i1OgHDw1B8FwrWhIGQ';
-const hdrs = { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' };
+const SUPABASE_URL='https://gslrukaitvxmxmwzbbqx.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbHJ1a2FpdHZ4bXhtd3piYnF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NDE1NjUsImV4cCI6MjA5MTMxNzU2NX0.2x-zk7UjgwGEIll-T_PXMDAo1i1OgHDw1B8FwrWhIGQ';
+const hdrs={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
 
-async function sbGet(table) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`, { headers: hdrs });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function sbUpsert(table, data) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-    method: 'POST', headers: { ...hdrs, 'Prefer': 'resolution=merge-duplicates,return=representation' },
-    body: JSON.stringify(data)
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
+async function sbGet(table,filter=''){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*${filter?'&'+filter:''}`,{headers:hdrs});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbUpsert(table,data){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...hdrs,'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify(data)});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbDelete(table,filter){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${filter}`,{method:'DELETE',headers:hdrs});if(!r.ok)throw new Error(await r.text());}
 
-// ── Site data from WordPress XML ──────────────────────────────────────────
-const SITE = [
-  { section:'About Us', pages:[
-    { id:'about', name:'About Us', url:'https://mirrorimage.spurrierdesign.com/about/', wpStatus:'publish',
-      images:[
-        {name:'Group-175-1.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2024/12/Group-175-1.png'},
-        {name:'mirror-image-impressions-magazine.jpg',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/mirror-image-impressions-magazine.jpg'},
-        {name:'eco.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/eco.png'},
-        {name:'activist.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/activist.png'},
-        {name:'uaw.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/uaw.png'},
-      ],
-      dropdowns:[
-        { section:'Main Navigation', items:[
-          {label:'Services',url:'/services/'},
-          {label:'Gallery',url:'/our-work/'},
-          {label:'Quote',url:'/quote/'},
-          {label:'Catalogs',url:'/catalog/'},
-          {label:'Resources',url:'/resources/'},
-          {label:'Blog',url:'/blog/'},
-          {label:'Contact',url:'/contact/'},
-        ]},
-        { section:'Footer Links', items:[
-          {label:'Privacy Policy',url:'/?page_id=3'},
-        ]},
-      ]
-    },
+// ── DEFAULT SITE DATA (used on first load if no DB structure exists) ──
+const DEFAULT_SITE=[
+  {section:'About Us',pages:[
+    {id:'about',name:'About Us',url:'https://mirrorimage.spurrierdesign.com/about/',wpStatus:'publish',images:[{name:'Group-175-1.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2024/12/Group-175-1.png'},{name:'mirror-image-impressions-magazine.jpg',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/mirror-image-impressions-magazine.jpg'},{name:'eco.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/eco.png'},{name:'activist.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/activist.png'},{name:'uaw.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/uaw.png'}],dropdowns:[{section:'Main Navigation',items:[{label:'Services',url:'/services/'},{label:'Gallery',url:'/our-work/'},{label:'Quote',url:'/quote/'},{label:'Catalogs',url:'/catalog/'},{label:'Resources',url:'/resources/'},{label:'Blog',url:'/blog/'},{label:'Contact',url:'/contact/'}]},{section:'Footer Links',items:[{label:'Privacy Policy',url:'/?page_id=3'}]}]},
   ]},
-  { section:'Services', pages:[
-    { id:'services', name:'Services', url:'https://mirrorimage.spurrierdesign.com/services/', wpStatus:'publish', images:[],
-      dropdowns:[
-        { section:'Service Navigation', items:[
-          {label:'Screen Printing',url:'/services/screen-printing/'},
-          {label:'Embroidery',url:'/services/embroidery/'},
-          {label:'Promotional Products',url:'/services/promotional-products/'},
-        ]},
-        { section:'Page CTAs', items:[
-          {label:'Get a Quote',url:'/quote/'},
-        ]},
-      ]
-    },
-    { id:'screen-printing', name:'Screen Printing', url:'https://mirrorimage.spurrierdesign.com/services/screen-printing/', wpStatus:'publish',
-      images:[
-        {name:'screen_printing.webp',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/screen_printing.webp'},
-        {name:'Screen-Printing.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/Screen-Printing.png'},
-      ],
-      dropdowns:[
-        { section:'Page CTAs', items:[
-          {label:'Get a Quote',url:'/quote/'},
-          {label:'View Gallery',url:'/our-work/'},
-        ]},
-      ]
-    },
-    { id:'embroidery', name:'Embroidery', url:'https://mirrorimage.spurrierdesign.com/services/embroidery/', wpStatus:'publish',
-      images:[
-        {name:'embroidery.webp',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/embroidery.webp'},
-        {name:'james-inigo-unsplash.jpg',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/james-inigo-beK1tm4ufpU-unsplash-scaled.jpg'},
-        {name:'emb-hat-1.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/emb-hat-1.png'},
-        {name:'emb-hat-2.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/emb-hat-2.png'},
-        {name:'emb-hat-3.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/emb-hat-3.png'},
-        {name:'Digitizing.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/Digitizing.png'},
-      ],
-      dropdowns:[
-        { section:'Page CTAs', items:[
-          {label:'Get a Quote',url:'/quote/'},
-          {label:'View Gallery',url:'/our-work/'},
-        ]},
-      ]
-    },
-    { id:'promo-products', name:'Promotional Products', url:'https://mirrorimage.spurrierdesign.com/services/promotional-products/', wpStatus:'publish',
-      images:[{name:'how-do-i-use-my-promo-products.webp',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/how-do-i-use-my-promo-products.webp'}],
-      dropdowns:[
-        { section:'Page CTAs', items:[
-          {label:'Get a Quote',url:'/quote/'},
-        ]},
-      ]
-    },
+  {section:'Services',pages:[
+    {id:'services',name:'Services',url:'https://mirrorimage.spurrierdesign.com/services/',wpStatus:'publish',images:[],dropdowns:[{section:'Service Navigation',items:[{label:'Screen Printing',url:'/services/screen-printing/'},{label:'Embroidery',url:'/services/embroidery/'},{label:'Promotional Products',url:'/services/promotional-products/'}]},{section:'Page CTAs',items:[{label:'Get a Quote',url:'/quote/'}]}]},
+    {id:'screen-printing',name:'Screen Printing',url:'https://mirrorimage.spurrierdesign.com/services/screen-printing/',wpStatus:'publish',images:[{name:'screen_printing.webp',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/screen_printing.webp'},{name:'Screen-Printing.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/Screen-Printing.png'}],dropdowns:[{section:'Page CTAs',items:[{label:'Get a Quote',url:'/quote/'},{label:'View Gallery',url:'/our-work/'}]}]},
+    {id:'embroidery',name:'Embroidery',url:'https://mirrorimage.spurrierdesign.com/services/embroidery/',wpStatus:'publish',images:[{name:'embroidery.webp',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/embroidery.webp'},{name:'emb-hat-1.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/emb-hat-1.png'},{name:'emb-hat-2.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/emb-hat-2.png'},{name:'emb-hat-3.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/emb-hat-3.png'},{name:'Digitizing.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/Digitizing.png'}],dropdowns:[{section:'Page CTAs',items:[{label:'Get a Quote',url:'/quote/'},{label:'View Gallery',url:'/our-work/'}]}]},
+    {id:'promo-products',name:'Promotional Products',url:'https://mirrorimage.spurrierdesign.com/services/promotional-products/',wpStatus:'publish',images:[{name:'how-do-i-use-my-promo-products.webp',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/how-do-i-use-my-promo-products.webp'}],dropdowns:[{section:'Page CTAs',items:[{label:'Get a Quote',url:'/quote/'}]}]},
   ]},
-  { section:'Gallery', pages:[
-    { id:'gallery', name:'Gallery / Our Work', url:'https://mirrorimage.spurrierdesign.com/our-work/', wpStatus:'publish', images:[], dropdowns:[] },
+  {section:'Gallery',pages:[
+    {id:'gallery',name:'Gallery / Our Work',url:'https://mirrorimage.spurrierdesign.com/our-work/',wpStatus:'publish',images:[],dropdowns:[]},
   ]},
-  { section:'Quote', pages:[
-    { id:'quote', name:'Quote', url:'https://mirrorimage.spurrierdesign.com/quote/', wpStatus:'publish', images:[],
-      dropdowns:[
-        { section:'Quote Form Fields', items:[
-          {label:'Quote Form',url:'/quote/quote-form/'},
-        ]},
-      ]
-    },
-    { id:'quote-form', name:'Quote Form', url:'https://mirrorimage.spurrierdesign.com/quote/quote-form/', wpStatus:'publish', images:[], dropdowns:[] },
+  {section:'Quote',pages:[
+    {id:'quote',name:'Quote',url:'https://mirrorimage.spurrierdesign.com/quote/',wpStatus:'publish',images:[],dropdowns:[{section:'Quote Form Fields',items:[{label:'Quote Form',url:'/quote/quote-form/'}]}]},
+    {id:'quote-form',name:'Quote Form',url:'https://mirrorimage.spurrierdesign.com/quote/quote-form/',wpStatus:'publish',images:[],dropdowns:[]},
   ]},
-  { section:'Catalogs', pages:[
-    { id:'catalogs', name:'Catalogs', url:'https://mirrorimage.spurrierdesign.com/catalog/', wpStatus:'publish',
-      images:[
-        {name:'hanes-bg.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/hanes-bg.png'},
-        {name:'la-apparel.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/la-apparel.png'},
-        {name:'sw-collection.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/sw-collection.png'},
-        {name:'laa-logo.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/laa-logo.png'},
-        {name:'hanes.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/hanes.png'},
-        {name:'SWC-Logo.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/SWC-Logo.png'},
-        {name:'logoipsum-218.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-218.png'},
-        {name:'logoipsum-220.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-220.png'},
-        {name:'logoipsum-221.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-221.png'},
-        {name:'logoipsum-228.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-228.png'},
-        {name:'logoipsum-229.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-229.png'},
-        {name:'logoipsum-311.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-311.png'},
-        {name:'logoipsum-317.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-317.png'},
-        {name:'logoipsum-323.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-323.png'},
-        {name:'logoipsum-325.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-325.png'},
-        {name:'logoipsum-338.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-338.png'},
-        {name:'logoipsum-340.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-340.png'},
-        {name:'logoipsum-348.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-348.png'},
-        {name:'logoipsum-371.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-371.png'},
-        {name:'logoipsum-378.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/logoipsum-378.png'},
-      ],
-      dropdowns:[
-        { section:'Catalog Downloads', items:[
-          {label:'Hanes Catalog',url:'#'},
-          {label:'LA Apparel Catalog',url:'#'},
-          {label:'S&W Collection',url:'#'},
-        ]},
-      ]
-    },
+  {section:'Catalogs',pages:[
+    {id:'catalogs',name:'Catalogs',url:'https://mirrorimage.spurrierdesign.com/catalog/',wpStatus:'publish',images:[{name:'hanes-bg.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/hanes-bg.png'},{name:'la-apparel.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/la-apparel.png'},{name:'sw-collection.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/sw-collection.png'},{name:'SWC-Logo.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/SWC-Logo.png'},{name:'hanes.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/hanes.png'},{name:'laa-logo.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/laa-logo.png'}],dropdowns:[{section:'Catalog Downloads',items:[{label:'Hanes Catalog',url:'#'},{label:'LA Apparel Catalog',url:'#'},{label:'S&W Collection',url:'#'}]}]},
   ]},
-  { section:'Resources', pages:[
-    { id:'resources', name:'Resources', url:'https://mirrorimage.spurrierdesign.com/resources/', wpStatus:'publish', images:[],
-      dropdowns:[
-        { section:'Resource Links', items:[
-          {label:'Art Guidelines',url:'/resources/art-guidelines/'},
-          {label:'FAQ',url:'/resources/faq/'},
-        ]},
-      ]
-    },
-    { id:'art-guidelines', name:'Art Guidelines', url:'https://mirrorimage.spurrierdesign.com/resources/art-guidelines/', wpStatus:'publish',
-      images:[{name:'shirt_guide.webp',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/shirt_guide.webp'}],
-      dropdowns:[
-        { section:'Related Links', items:[
-          {label:'FAQ',url:'/resources/faq/'},
-          {label:'Get a Quote',url:'/quote/'},
-        ]},
-      ]
-    },
-    { id:'faq', name:'FAQ', url:'https://mirrorimage.spurrierdesign.com/resources/faq/', wpStatus:'publish', images:[], dropdowns:[] },
+  {section:'Resources',pages:[
+    {id:'resources',name:'Resources',url:'https://mirrorimage.spurrierdesign.com/resources/',wpStatus:'publish',images:[],dropdowns:[{section:'Resource Links',items:[{label:'Art Guidelines',url:'/resources/art-guidelines/'},{label:'FAQ',url:'/resources/faq/'}]}]},
+    {id:'art-guidelines',name:'Art Guidelines',url:'https://mirrorimage.spurrierdesign.com/resources/art-guidelines/',wpStatus:'publish',images:[{name:'shirt_guide.webp',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/shirt_guide.webp'}],dropdowns:[{section:'Related Links',items:[{label:'FAQ',url:'/resources/faq/'},{label:'Get a Quote',url:'/quote/'}]}]},
+    {id:'faq',name:'FAQ',url:'https://mirrorimage.spurrierdesign.com/resources/faq/',wpStatus:'publish',images:[],dropdowns:[]},
   ]},
-  { section:'Blog', pages:[
-    { id:'blog', name:'Blog', url:'https://mirrorimage.spurrierdesign.com/blog/', wpStatus:'publish', images:[], dropdowns:[] },
-    { id:'blog-post-1', name:'Blog Post 1', url:'https://mirrorimage.spurrierdesign.com/2025/04/blog-post-1/', wpStatus:'publish',
-      images:[{name:'600x__-screen_printing.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/600x__-Screen_Printing.png'}],
-      dropdowns:[]
-    },
-    { id:'blog-post-2', name:'Blog Post 2', url:'https://mirrorimage.spurrierdesign.com/2025/03/blog-post-2/', wpStatus:'publish',
-      images:[{name:'600x__-embroidery_thumbnail.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/600x__-embroidery_thumbnail.png'}],
-      dropdowns:[]
-    },
-    { id:'blog-post-3', name:'Blog Post 3', url:'https://mirrorimage.spurrierdesign.com/2025/04/blog-post-3/', wpStatus:'publish',
-      images:[{name:'mf63.jpg',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/mf63.jpg'}],
-      dropdowns:[]
-    },
+  {section:'Blog',pages:[
+    {id:'blog',name:'Blog',url:'https://mirrorimage.spurrierdesign.com/blog/',wpStatus:'publish',images:[],dropdowns:[]},
+    {id:'blog-post-1',name:'Blog Post 1',url:'https://mirrorimage.spurrierdesign.com/2025/04/blog-post-1/',wpStatus:'publish',images:[{name:'600x__-screen_printing.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/600x__-Screen_Printing.png'}],dropdowns:[]},
+    {id:'blog-post-2',name:'Blog Post 2',url:'https://mirrorimage.spurrierdesign.com/2025/03/blog-post-2/',wpStatus:'publish',images:[{name:'600x__-embroidery_thumbnail.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/600x__-embroidery_thumbnail.png'}],dropdowns:[]},
+    {id:'blog-post-3',name:'Blog Post 3',url:'https://mirrorimage.spurrierdesign.com/2025/04/blog-post-3/',wpStatus:'publish',images:[{name:'mf63.jpg',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/mf63.jpg'}],dropdowns:[]},
   ]},
-  { section:'Contact', pages:[
-    { id:'contact', name:'Contact', url:'https://mirrorimage.spurrierdesign.com/contact/', wpStatus:'publish', images:[], dropdowns:[] },
+  {section:'Contact',pages:[
+    {id:'contact',name:'Contact',url:'https://mirrorimage.spurrierdesign.com/contact/',wpStatus:'publish',images:[],dropdowns:[]},
   ]},
-  { section:'Legal', pages:[
-    { id:'privacy-policy', name:'Privacy Policy', url:'https://mirrorimage.spurrierdesign.com/?page_id=3', wpStatus:'draft', images:[], dropdowns:[] },
+  {section:'Legal',pages:[
+    {id:'privacy-policy',name:'Privacy Policy',url:'https://mirrorimage.spurrierdesign.com/?page_id=3',wpStatus:'draft',images:[],dropdowns:[]},
   ]},
 ];
 
-// Home page data
-const HOME_PAGE = {
-  id:'home', name:'Home', url:'https://mirrorimage.spurrierdesign.com/', wpStatus:'publish',
-  images:[
-    {name:'drip-left-black.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/drip-left-black.png'},
-    {name:'turq-drips.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/turq-drips.png'},
-    {name:'black-drips.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/black-drips.png'},
-    {name:'Theme-Screenshot.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/Theme-Screenshot.png'},
-  ],
-  dropdowns:[
-    { section:'Main Navigation', items:[
-      {label:'Services',url:'/services/'},
-      {label:'Gallery',url:'/our-work/'},
-      {label:'Quote',url:'/quote/'},
-      {label:'Catalogs',url:'/catalog/'},
-      {label:'Resources',url:'/resources/'},
-      {label:'Blog',url:'/blog/'},
-      {label:'Contact',url:'/contact/'},
-    ]},
-    { section:'Services Dropdown', items:[
-      {label:'Screen Printing',url:'/services/screen-printing/'},
-      {label:'Embroidery',url:'/services/embroidery/'},
-      {label:'Promotional Products',url:'/services/promotional-products/'},
-    ]},
-    { section:'Resources Dropdown', items:[
-      {label:'Art Guidelines',url:'/resources/art-guidelines/'},
-      {label:'FAQ',url:'/resources/faq/'},
-    ]},
-    { section:'Hero CTAs', items:[
-      {label:'Get a Quote',url:'/quote/'},
-      {label:'View Our Work',url:'/our-work/'},
-    ]},
-    { section:'Footer Links', items:[
-      {label:'Privacy Policy',url:'/?page_id=3'},
-      {label:'Contact',url:'/contact/'},
-    ]},
-  ]
-};
+const HOME_PAGE={id:'home',name:'Home',url:'https://mirrorimage.spurrierdesign.com/',wpStatus:'publish',images:[{name:'drip-left-black.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/drip-left-black.png'},{name:'turq-drips.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/turq-drips.png'},{name:'black-drips.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/07/black-drips.png'},{name:'Theme-Screenshot.png',url:'https://mirrorimage.spurrierdesign.com/wp-content/uploads/2025/04/Theme-Screenshot.png'}],dropdowns:[{section:'Main Navigation',items:[{label:'Services',url:'/services/'},{label:'Gallery',url:'/our-work/'},{label:'Quote',url:'/quote/'},{label:'Catalogs',url:'/catalog/'},{label:'Resources',url:'/resources/'},{label:'Blog',url:'/blog/'},{label:'Contact',url:'/contact/'}]},{section:'Services Dropdown',items:[{label:'Screen Printing',url:'/services/screen-printing/'},{label:'Embroidery',url:'/services/embroidery/'},{label:'Promotional Products',url:'/services/promotional-products/'}]},{section:'Resources Dropdown',items:[{label:'Art Guidelines',url:'/resources/art-guidelines/'},{label:'FAQ',url:'/resources/faq/'}]},{section:'Hero CTAs',items:[{label:'Get a Quote',url:'/quote/'},{label:'View Our Work',url:'/our-work/'}]},{section:'Footer Links',items:[{label:'Privacy Policy',url:'/?page_id=3'},{label:'Contact',url:'/contact/'}]}]};
 
-const ALL_IDS = ['home', ...SITE.flatMap(s => s.pages.map(p => p.id))];
-const PAGE_MAP = { home: HOME_PAGE };
-SITE.forEach(s => s.pages.forEach(p => { PAGE_MAP[p.id] = p; }));
+// ── Live site structure (loaded from / saved to Supabase) ──
+let SITE = [];
+let PAGE_MAP = {};
+let state = {};
+let pendingSectionTarget = null; // which section to add page to
 
-// State
-const state = {};
-ALL_IDS.forEach(id => {
-  state[id] = { copy_status:'Not Started', image_status:'Not Started', copy_notes:'', image_notes:'', updated_by:'', updated_at:'', dropdowns: null };
-});
-
-// User
-let userName = localStorage.getItem('mi_username') || '';
+let userName = localStorage.getItem('mi_username')||'';
 const nameInput = document.getElementById('user-name-input');
 nameInput.value = userName;
-nameInput.addEventListener('change', () => { userName = nameInput.value.trim() || 'Anonymous'; localStorage.setItem('mi_username', userName); });
+nameInput.addEventListener('change',()=>{userName=nameInput.value.trim()||'Anonymous';localStorage.setItem('mi_username',userName);});
 
-// ── Build grid ──
-const grid = document.getElementById('sections-grid');
-SITE.forEach(sec => {
-  const col = document.createElement('div');
-  col.className = 'section-col';
-  col.innerHTML = `<div class="tick-down"></div><div class="section-header">${sec.section}</div>`;
-  const list = document.createElement('div');
-  list.className = 'page-list';
-  sec.pages.forEach(page => {
-    list.insertAdjacentHTML('beforeend', `<div class="page-connector-line"></div>`);
-    const card = document.createElement('div');
-    card.className = 'page-card';
-    card.id = 'card-' + page.id;
-    const imgCount = page.images ? page.images.length : 0;
-    const ddCount = page.dropdowns ? page.dropdowns.reduce((a,s) => a + s.items.length, 0) : 0;
-    const badge = page.wpStatus === 'draft' ? `<div class="draft-badge">DRAFT</div>` : (imgCount > 0 ? `<div class="img-badge">🖼 ${imgCount}</div>` : '');
-    const ddBadge = ddCount > 0 ? `<div class="dropdown-badge">☰ ${ddCount}</div>` : '';
-    card.innerHTML = `${badge}${ddBadge}
-      <div class="page-name">${page.name}</div>
-      <div class="page-url">${page.url.replace('https://mirrorimage.spurrierdesign.com','')}</div>
-      <div class="chips">
-        <select class="card-select copy-sel" data-id="${page.id}" data-type="copy_status" onchange="onStatusChange(this)"><option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option></select>
-        <select class="card-select img-sel" data-id="${page.id}" data-type="image_status" onchange="onStatusChange(this)"><option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option></select>
+// ── Build / Rebuild the grid from SITE ──
+function buildGrid() {
+  const grid = document.getElementById('sections-grid');
+  // Keep the h-line-row, remove the rest
+  [...grid.children].forEach(c=>{ if(!c.classList.contains('h-line-row')) c.remove(); });
+
+  SITE.forEach((sec,si) => {
+    const col = document.createElement('div');
+    col.className = 'section-col';
+    col.dataset.si = si;
+
+    col.innerHTML = `<div class="tick-down"></div>
+      <div class="section-header">
+        <div class="section-header-inner">
+          <input class="section-name-input" value="${escHtml(sec.section)}" onchange="renameSection(${si},this.value)" title="Click to rename section">
+          <button class="section-action-btn del" onclick="deleteSection(${si})" title="Delete section">✕</button>
+        </div>
       </div>`;
-    card.addEventListener('click', e => { if (e.target.tagName === 'SELECT') return; openDetail(page.id); });
-    list.appendChild(card);
+
+    const list = document.createElement('div');
+    list.className = 'page-list';
+    list.id = `page-list-${si}`;
+
+    sec.pages.forEach(page => addPageCardToList(list, page, si));
+
+    const addBtn = document.createElement('div');
+    addBtn.innerHTML = `<div class="page-connector-line"></div><button class="add-page-btn" onclick="openAddPageModal(${si})">+ Add Page</button>`;
+    list.appendChild(addBtn);
+
+    col.appendChild(list);
+    grid.appendChild(col);
   });
-  col.appendChild(list);
-  grid.appendChild(col);
-});
 
-// ── State helpers ──
-function applyState(id, flash=false) {
-  const s = state[id];
-  document.querySelectorAll(`[data-id="${id}"]`).forEach(sel => { sel.value = s[sel.dataset.type]; styleSelect(sel); });
-  if (flash) { const c = document.getElementById('card-'+id); if(c){c.classList.remove('just-updated');void c.offsetWidth;c.classList.add('just-updated');} }
-}
-function styleSelect(sel) {
-  const base = sel.dataset.type === 'copy_status' ? 'copy-sel' : 'img-sel';
-  sel.className = `card-select ${base}`;
-  if (sel.value==='Complete') sel.classList.add('status-done');
-  if (sel.value==='In Progress') sel.classList.add('status-inprog');
-  if (sel.value==='N/A') sel.classList.add('status-na');
-}
-function styleItemSelect(sel) {
-  sel.className = 'item-status-select';
-  if (sel.value==='Complete') sel.classList.add('s-done');
-  if (sel.value==='In Progress') sel.classList.add('s-inprog');
-  if (sel.value==='N/A') sel.classList.add('s-na');
-}
-function updateStats() {
-  const total = ALL_IDS.length;
-  const cd = ALL_IDS.filter(id=>state[id].copy_status==='Complete').length;
-  const id2 = ALL_IDS.filter(id=>state[id].image_status==='Complete').length;
-  document.getElementById('total-pages').textContent = total;
-  document.getElementById('copy-done-count').textContent = cd;
-  document.getElementById('img-done-count').textContent = id2;
-  const cp = Math.round(cd/total*100), ip = Math.round(id2/total*100);
-  document.getElementById('copy-bar').style.width = cp+'%'; document.getElementById('copy-pct').textContent = cp+'%';
-  document.getElementById('img-bar').style.width = ip+'%'; document.getElementById('img-pct').textContent = ip+'%';
-}
+  // Add Section button column
+  const addCol = document.createElement('div');
+  addCol.className = 'add-section-col';
+  addCol.innerHTML = `<div class="tick-down" style="background:transparent"></div><button class="add-section-btn-main" onclick="openAddSectionModal()">+ Add<br>Section</button>`;
+  grid.appendChild(addCol);
 
-function setSyncStatus(s, text) {
-  const el = document.getElementById('sync-status');
-  el.className = s ? ('sync-status '+s) : '';
-  document.getElementById('sync-text').textContent = text;
-  el.querySelector('.sync-dot').className = 'sync-dot'+(s==='syncing'?' pulse':'');
-}
-
-let saveTimer = {};
-async function saveToDb(id) {
-  setSyncStatus('syncing','Saving…');
-  try {
-    const s = state[id];
-    await sbUpsert('page_status',[{ id, copy_status:s.copy_status, image_status:s.image_status, copy_notes:s.copy_notes, image_notes:s.image_notes, updated_by:userName||'Anonymous', updated_at:new Date().toISOString(), dropdowns: JSON.stringify(s.dropdowns||getDefaultDropdowns(id)) }]);
-    setSyncStatus('saved','Saved ✓'); setTimeout(()=>setSyncStatus('','Live'),2000);
-  } catch(e) { setSyncStatus('error','Error saving'); console.error(e); }
-}
-function debounceSave(id) { clearTimeout(saveTimer[id]); saveTimer[id]=setTimeout(()=>saveToDb(id),600); }
-
-function getDefaultDropdowns(id) {
-  const p = PAGE_MAP[id];
-  return p && p.dropdowns ? JSON.parse(JSON.stringify(p.dropdowns)) : [];
-}
-
-function onStatusChange(sel) {
-  const id = sel.dataset.id;
-  state[id][sel.dataset.type] = sel.value;
-  styleSelect(sel); updateStats(); debounceSave(id);
-  if (currentId===id) document.getElementById(sel.dataset.type==='copy_status'?'dp-copy':'dp-image').value = sel.value;
-}
-
-// ── Detail Panel ──
-let currentId = null;
-let currentTab = 'status';
-
-function openDetail(id) {
-  currentId = id;
-  const p = PAGE_MAP[id];
-  const s = state[id];
-  document.getElementById('dp-name').textContent = p.name;
-  const urlEl = document.getElementById('dp-url');
-  urlEl.textContent = p.url; urlEl.href = p.url;
-  const wpEl = document.getElementById('dp-wp-status');
-  wpEl.textContent = p.wpStatus==='draft' ? 'DRAFT' : 'Published';
-  wpEl.className = 'dp-wp-status ' + p.wpStatus;
-  document.getElementById('dp-copy').value = s.copy_status;
-  document.getElementById('dp-image').value = s.image_status;
-  document.getElementById('dp-copy-notes').value = s.copy_notes;
-  document.getElementById('dp-image-notes').value = s.image_notes;
-  document.getElementById('dp-last-edited').textContent = s.updated_by ? `Last edited by ${s.updated_by}${s.updated_at?' · '+new Date(s.updated_at).toLocaleDateString():''}` : '';
-
-  // Render dropdowns
-  renderDropdowns(id);
-
-  // Render images
-  renderImages(id);
-
-  document.getElementById('detail-panel').classList.add('open');
-  document.querySelectorAll('.page-card').forEach(c=>c.classList.remove('selected'));
-  const card = document.getElementById('card-'+id);
-  if (card) card.classList.add('selected');
-
-  // Switch to last used tab
-  switchTab(currentTab, document.querySelector(`.dp-tab:nth-child(${currentTab==='status'?1:currentTab==='dropdowns'?2:3})`));
-}
-
-function closeDetail() {
-  document.getElementById('detail-panel').classList.remove('open');
-  document.querySelectorAll('.page-card').forEach(c=>c.classList.remove('selected'));
-  currentId = null;
-}
-
-function switchTab(name, btn) {
-  currentTab = name;
-  document.querySelectorAll('.dp-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
-}
-
-function syncFromPanel(type) {
-  if (!currentId) return;
-  state[currentId][type] = document.getElementById(type==='copy_status'?'dp-copy':'dp-image').value;
-  document.querySelectorAll(`[data-id="${currentId}"][data-type="${type}"]`).forEach(sel=>{sel.value=state[currentId][type];styleSelect(sel);});
+  // Re-apply state to all newly created selects
+  Object.keys(state).forEach(id => applyState(id));
   updateStats();
 }
 
-function saveDetail() {
-  if (!currentId) return;
-  state[currentId].copy_status = document.getElementById('dp-copy').value;
-  state[currentId].image_status = document.getElementById('dp-image').value;
-  state[currentId].copy_notes = document.getElementById('dp-copy-notes').value;
-  state[currentId].image_notes = document.getElementById('dp-image-notes').value;
+function addPageCardToList(list, page, si) {
+  const conn = document.createElement('div');
+  conn.className = 'page-connector-line';
+  list.appendChild(conn);
+
+  const card = document.createElement('div');
+  card.className = 'page-card';
+  card.id = 'card-' + page.id;
+
+  const imgCount = page.images ? page.images.length : 0;
+  const ddCount = page.dropdowns ? page.dropdowns.reduce((a,s)=>a+s.items.length,0) : 0;
+  const isNew = page.wpStatus === 'planned';
+  const badge = isNew ? `<div class="new-badge">NEW</div>`
+    : page.wpStatus==='draft' ? `<div class="draft-badge">DRAFT</div>`
+    : (imgCount>0 ? `<div class="img-badge">🖼 ${imgCount}</div>` : '');
+  const ddBadge = ddCount>0 ? `<div class="dropdown-badge">☰ ${ddCount}</div>` : '';
+  const dispUrl = page.url.replace('https://mirrorimage.spurrierdesign.com','');
+
+  card.innerHTML = `${badge}${ddBadge}
+    <div class="page-name">${escHtml(page.name)}</div>
+    <div class="page-url">${escHtml(dispUrl||page.url)}</div>
+    <div class="chips">
+      <select class="card-select copy-sel" data-id="${page.id}" data-type="copy_status" onchange="onStatusChange(this)"><option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option></select>
+      <select class="card-select img-sel" data-id="${page.id}" data-type="image_status" onchange="onStatusChange(this)"><option>Not Started</option><option>In Progress</option><option>Complete</option><option>N/A</option></select>
+    </div>`;
+  card.addEventListener('click', e=>{ if(e.target.tagName==='SELECT') return; openDetail(page.id); });
+  list.appendChild(card);
+}
+
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Section management ──
+function renameSection(si, val) {
+  SITE[si].section = val;
+  saveStructure();
+}
+function deleteSection(si) {
+  if(!confirm(`Delete the "${SITE[si].section}" section and all its pages? This cannot be undone.`)) return;
+  const ids = SITE[si].pages.map(p=>p.id);
+  SITE.splice(si,1);
+  // Remove from PAGE_MAP and state
+  ids.forEach(id=>{ delete PAGE_MAP[id]; delete state[id]; });
+  saveStructure();
+  buildGrid();
+}
+
+// ── Add Section Modal ──
+function openAddSectionModal() {
+  document.getElementById('new-section-name').value='';
+  document.getElementById('add-section-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('new-section-name').focus(),50);
+}
+function confirmAddSection() {
+  const name = document.getElementById('new-section-name').value.trim();
+  if(!name) return;
+  SITE.push({ section: name, pages: [] });
+  saveStructure();
+  buildGrid();
+  closeModal('add-section-modal');
+}
+
+// ── Add Page Modal ──
+function openAddPageModal(si) {
+  pendingSectionTarget = si;
+  document.getElementById('new-page-name').value='';
+  document.getElementById('new-page-url').value='';
+  document.getElementById('new-page-status').value='planned';
+  document.getElementById('add-page-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('new-page-name').focus(),50);
+}
+function confirmAddPage() {
+  const name = document.getElementById('new-page-name').value.trim();
+  const urlVal = document.getElementById('new-page-url').value.trim();
+  const status = document.getElementById('new-page-status').value;
+  if(!name) return;
+  const base = 'https://mirrorimage.spurrierdesign.com';
+  const fullUrl = urlVal.startsWith('http') ? urlVal : base+(urlVal||'/'+name.toLowerCase().replace(/\s+/g,'-')+'/');
+  const id = 'page-'+Date.now();
+  const page = { id, name, url: fullUrl, wpStatus: status, images:[], dropdowns:[] };
+  PAGE_MAP[id] = page;
+  state[id] = { copy_status:'Not Started', image_status:'Not Started', copy_notes:'', image_notes:'', updated_by:'', updated_at:'', dropdowns:null };
+  SITE[pendingSectionTarget].pages.push(page);
+  saveStructure();
+  buildGrid();
+  closeModal('add-page-modal');
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m) m.classList.remove('open');}));
+// Enter key submits modals
+document.getElementById('add-page-modal').addEventListener('keydown',e=>{ if(e.key==='Enter') confirmAddPage(); });
+document.getElementById('add-section-modal').addEventListener('keydown',e=>{ if(e.key==='Enter') confirmAddSection(); });
+
+// ── State helpers ──
+function getAllIds() { return ['home', ...SITE.flatMap(s=>s.pages.map(p=>p.id))]; }
+
+function applyState(id) {
+  const s = state[id];
+  if(!s) return;
+  document.querySelectorAll(`[data-id="${id}"]`).forEach(sel=>{ sel.value=s[sel.dataset.type]; styleSelect(sel); });
+}
+function applyStateFlash(id) {
+  applyState(id);
+  const c=document.getElementById('card-'+id);
+  if(c){c.classList.remove('just-updated');void c.offsetWidth;c.classList.add('just-updated');}
+}
+function styleSelect(sel) {
+  const base=sel.dataset.type==='copy_status'?'copy-sel':'img-sel';
+  sel.className=`card-select ${base}`;
+  if(sel.value==='Complete') sel.classList.add('status-done');
+  if(sel.value==='In Progress') sel.classList.add('status-inprog');
+  if(sel.value==='N/A') sel.classList.add('status-na');
+}
+function styleItemSelect(sel) {
+  sel.className='item-status-select';
+  if(sel.value==='Complete') sel.classList.add('s-done');
+  if(sel.value==='In Progress') sel.classList.add('s-inprog');
+  if(sel.value==='N/A') sel.classList.add('s-na');
+}
+function updateStats() {
+  const ids=getAllIds(); const total=ids.length;
+  const cd=ids.filter(id=>state[id]&&state[id].copy_status==='Complete').length;
+  const id2=ids.filter(id=>state[id]&&state[id].image_status==='Complete').length;
+  document.getElementById('total-pages').textContent=total;
+  document.getElementById('copy-done-count').textContent=cd;
+  document.getElementById('img-done-count').textContent=id2;
+  const cp=total?Math.round(cd/total*100):0, ip=total?Math.round(id2/total*100):0;
+  document.getElementById('copy-bar').style.width=cp+'%'; document.getElementById('copy-pct').textContent=cp+'%';
+  document.getElementById('img-bar').style.width=ip+'%'; document.getElementById('img-pct').textContent=ip+'%';
+}
+
+function setSyncStatus(s,text) {
+  const el=document.getElementById('sync-status');
+  el.className=s?('sync-status '+s):'';
+  document.getElementById('sync-text').textContent=text;
+  el.querySelector('.sync-dot').className='sync-dot'+(s==='syncing'?' pulse':'');
+}
+
+// ── Save structure to Supabase ──
+async function saveStructure() {
+  try {
+    await sbUpsert('site_structure',[{id:'main',data:JSON.stringify(SITE),updated_at:new Date().toISOString()}]);
+  } catch(e){ console.error('Structure save failed',e); }
+}
+
+// ── Save page status to Supabase ──
+let saveTimer={};
+async function saveToDb(id) {
+  setSyncStatus('syncing','Saving…');
+  try {
+    const s=state[id];
+    await sbUpsert('page_status',[{id,copy_status:s.copy_status,image_status:s.image_status,copy_notes:s.copy_notes,image_notes:s.image_notes,updated_by:userName||'Anonymous',updated_at:new Date().toISOString(),dropdowns:JSON.stringify(s.dropdowns||getDefaultDropdowns(id))}]);
+    setSyncStatus('saved','Saved ✓'); setTimeout(()=>setSyncStatus('','Live'),2000);
+  } catch(e){setSyncStatus('error','Error saving');console.error(e);}
+}
+function debounceSave(id){clearTimeout(saveTimer[id]);saveTimer[id]=setTimeout(()=>saveToDb(id),600);}
+
+function getDefaultDropdowns(id){const p=PAGE_MAP[id];return p&&p.dropdowns?JSON.parse(JSON.stringify(p.dropdowns)):[];}
+
+function onStatusChange(sel) {
+  const id=sel.dataset.id;
+  if(!state[id]) return;
+  state[id][sel.dataset.type]=sel.value;
+  styleSelect(sel); updateStats(); debounceSave(id);
+  if(currentId===id) document.getElementById(sel.dataset.type==='copy_status'?'dp-copy':'dp-image').value=sel.value;
+}
+
+// ── Detail Panel ──
+let currentId=null, currentTab='status';
+
+function openDetail(id) {
+  currentId=id;
+  const p=PAGE_MAP[id]; const s=state[id];
+  if(!p||!s) return;
+  document.getElementById('dp-name').value=p.name;
+  document.getElementById('dp-url-input').value=p.url;
+  const wpEl=document.getElementById('dp-wp-status');
+  wpEl.textContent=p.wpStatus==='planned'?'PLANNED':p.wpStatus==='draft'?'DRAFT':'Published';
+  wpEl.className='dp-wp-status '+(p.wpStatus||'publish');
+  document.getElementById('dp-copy').value=s.copy_status;
+  document.getElementById('dp-image').value=s.image_status;
+  document.getElementById('dp-copy-notes').value=s.copy_notes;
+  document.getElementById('dp-image-notes').value=s.image_notes;
+  document.getElementById('dp-last-edited').textContent=s.updated_by?`Last edited by ${s.updated_by}${s.updated_at?' · '+new Date(s.updated_at).toLocaleDateString():''}`:'' ;
+  renderDropdowns(id);
+  renderImages(id);
+  document.getElementById('detail-panel').classList.add('open');
+  document.querySelectorAll('.page-card').forEach(c=>c.classList.remove('selected'));
+  const card=document.getElementById('card-'+id); if(card) card.classList.add('selected');
+  switchTab(currentTab,document.querySelector(`.dp-tab:nth-child(${currentTab==='status'?1:currentTab==='dropdowns'?2:3})`));
+}
+function closeDetail(){
+  document.getElementById('detail-panel').classList.remove('open');
+  document.querySelectorAll('.page-card').forEach(c=>c.classList.remove('selected'));
+  currentId=null;
+}
+function switchTab(name,btn){
+  currentTab=name;
+  document.querySelectorAll('.dp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// Live edit page name / url from header inputs
+let metaSaveTimer=null;
+function updatePageMeta(){
+  if(!currentId) return;
+  clearTimeout(metaSaveTimer);
+  metaSaveTimer=setTimeout(()=>{
+    const name=document.getElementById('dp-name').value.trim();
+    const url=document.getElementById('dp-url-input').value.trim();
+    if(!name) return;
+    const p=PAGE_MAP[currentId];
+    p.name=name; p.url=url;
+    // Update card display
+    const card=document.getElementById('card-'+currentId);
+    if(card){
+      card.querySelector('.page-name').textContent=name;
+      const disp=url.replace('https://mirrorimage.spurrierdesign.com','');
+      card.querySelector('.page-url').textContent=disp||url;
+    }
+    // Update structure in SITE array
+    for(const sec of SITE){ for(const pg of sec.pages){ if(pg.id===currentId){pg.name=name;pg.url=url;break;} } }
+    saveStructure();
+  },600);
+}
+
+function cycleWpStatus(){
+  if(!currentId||currentId==='home') return;
+  const p=PAGE_MAP[currentId];
+  const cycle=['publish','draft','planned'];
+  const next=cycle[(cycle.indexOf(p.wpStatus)+1)%cycle.length];
+  p.wpStatus=next;
+  const wpEl=document.getElementById('dp-wp-status');
+  wpEl.textContent=next==='planned'?'PLANNED':next==='draft'?'DRAFT':'Published';
+  wpEl.className='dp-wp-status '+next;
+  // Update badge on card
+  for(const sec of SITE){ for(const pg of sec.pages){ if(pg.id===currentId){pg.wpStatus=next;break;} } }
+  buildGrid(); saveStructure();
+  // Re-open detail since rebuild closes it
+  openDetail(currentId);
+}
+
+function deletePage(){
+  if(!currentId||currentId==='home') return;
+  const p=PAGE_MAP[currentId];
+  if(!confirm(`Delete "${p.name}"? This will remove it from the tracker for everyone.`)) return;
+  const id=currentId;
+  closeDetail();
+  // Remove from SITE
+  for(const sec of SITE){ const i=sec.pages.findIndex(pg=>pg.id===id); if(i!==-1){sec.pages.splice(i,1);break;} }
+  delete PAGE_MAP[id]; delete state[id];
+  // Remove from DB
+  sbDelete('page_status',`id=eq.${id}`).catch(e=>console.warn('Delete row failed',e));
+  saveStructure();
+  buildGrid();
+}
+
+function syncFromPanel(type){
+  if(!currentId) return;
+  state[currentId][type]=document.getElementById(type==='copy_status'?'dp-copy':'dp-image').value;
+  document.querySelectorAll(`[data-id="${currentId}"][data-type="${type}"]`).forEach(sel=>{sel.value=state[currentId][type];styleSelect(sel);});
+  updateStats();
+}
+function saveDetail(){
+  if(!currentId) return;
+  state[currentId].copy_status=document.getElementById('dp-copy').value;
+  state[currentId].image_status=document.getElementById('dp-image').value;
+  state[currentId].copy_notes=document.getElementById('dp-copy-notes').value;
+  state[currentId].image_notes=document.getElementById('dp-image-notes').value;
   applyState(currentId); updateStats(); saveToDb(currentId); closeDetail();
 }
 
 // ── Dropdowns tab ──
-function getDropdowns(id) {
-  if (!state[id].dropdowns) state[id].dropdowns = getDefaultDropdowns(id);
-  return state[id].dropdowns;
-}
-
-function renderDropdowns(id) {
-  const list = document.getElementById('dropdown-sections-list');
-  list.innerHTML = '';
-  const dds = getDropdowns(id);
-  dds.forEach((sec, si) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'dropdown-section';
-    const totalItems = sec.items.length;
-    const doneItems = sec.items.filter(i=>i.status==='Complete').length;
-
-    wrap.innerHTML = `
+function getDropdowns(id){if(!state[id].dropdowns) state[id].dropdowns=getDefaultDropdowns(id);return state[id].dropdowns;}
+function renderDropdowns(id){
+  const list=document.getElementById('dropdown-sections-list'); list.innerHTML='';
+  const dds=getDropdowns(id);
+  dds.forEach((sec,si)=>{
+    const wrap=document.createElement('div'); wrap.className='dropdown-section';
+    const done=sec.items.filter(i=>i.status==='Complete').length;
+    wrap.innerHTML=`
       <div class="dropdown-section-header" onclick="toggleSection(this)">
-        <input class="section-name-edit" value="${sec.section}" onchange="renameSection('${id}',${si},this.value)" onclick="event.stopPropagation()" />
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:0.65rem;color:#aaa">${doneItems}/${totalItems}</span>
-          <span class="toggle-icon">▾</span>
-        </div>
+        <input class="section-name-edit" value="${escHtml(sec.section)}" onchange="renameDropdownSection('${id}',${si},this.value)" onclick="event.stopPropagation()"/>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:.65rem;color:#aaa">${done}/${sec.items.length}</span><span class="toggle-icon">▾</span></div>
       </div>
       <div class="dropdown-items" id="sec-items-${si}">
         ${sec.items.map((item,ii)=>`
           <div class="dropdown-item" id="dd-item-${si}-${ii}">
-            <div style="flex:1;min-width:0">
-              <div class="dropdown-item-label">${item.label}</div>
-              <div class="dropdown-item-url">${item.url}</div>
-            </div>
+            <div style="flex:1;min-width:0"><div class="dropdown-item-label">${escHtml(item.label)}</div><div class="dropdown-item-url">${escHtml(item.url)}</div></div>
             <select class="item-status-select" onchange="updateItemStatus('${id}',${si},${ii},this)">
               <option${item.status==='Not Started'||!item.status?' selected':''}>Not Started</option>
               <option${item.status==='In Progress'?' selected':''}>In Progress</option>
@@ -759,9 +758,9 @@ function renderDropdowns(id) {
               <option${item.status==='N/A'?' selected':''}>N/A</option>
             </select>
             <button class="item-note-toggle${item.note?' has-note':''}" title="${item.note?'Edit note':'Add note'}" onclick="toggleItemNote('note-${si}-${ii}')">💬</button>
-            <button onclick="removeItem('${id}',${si},${ii})" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:0.9rem;padding:0 2px;flex-shrink:0" title="Remove">✕</button>
+            <button onclick="removeItem('${id}',${si},${ii})" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:.9rem;padding:0 2px;flex-shrink:0" title="Remove">✕</button>
             <div class="item-note-row" id="note-${si}-${ii}">
-              <textarea class="item-note-input" placeholder="Add a note for this item…" onblur="updateItemNote('${id}',${si},${ii},this.value)">${item.note||''}</textarea>
+              <textarea class="item-note-input" placeholder="Add a note…" onblur="updateItemNote('${id}',${si},${ii},this.value)">${item.note||''}</textarea>
             </div>
           </div>`).join('')}
         <div class="inline-add" id="inline-add-${si}">
@@ -773,181 +772,131 @@ function renderDropdowns(id) {
           </div>
         </div>
         <button class="add-dropdown-btn" onclick="showAddItem(${si})">+ Add item</button>
-        <button class="add-dropdown-btn" style="margin-top:4px;color:#c0392b;border-color:#f5b7b1" onclick="removeSection('${id}',${si})">Remove section</button>
+        <button class="add-dropdown-btn" style="margin-top:4px;color:#c0392b;border-color:#f5b7b1" onclick="removeSection_dd('${id}',${si})">Remove section</button>
       </div>`;
     list.appendChild(wrap);
-
-    // Style selects
     wrap.querySelectorAll('.item-status-select').forEach(styleItemSelect);
   });
 }
-
-function toggleSection(hdr) {
-  const items = hdr.nextElementSibling;
-  hdr.classList.toggle('collapsed');
-  items.classList.toggle('hidden');
-}
-function toggleItemNote(noteId) {
-  const row = document.getElementById(noteId);
-  const isOpen = row.classList.toggle('open');
-  if (isOpen) row.querySelector('textarea').focus();
-}
-function updateItemNote(id, si, ii, val) {
-  getDropdowns(id)[si].items[ii].note = val;
-  // Update toggle button appearance without full re-render
-  const toggle = document.querySelector(`#dd-item-${si}-${ii} .item-note-toggle`);
-  if (toggle) {
-    toggle.classList.toggle('has-note', !!val.trim());
-    toggle.title = val.trim() ? 'Edit note' : 'Add note';
-  }
-  debounceSave(id);
-}
-function renameSection(id, si, val) {
-  getDropdowns(id)[si].section = val;
-  debounceSave(id);
-}
-function updateItemStatus(id, si, ii, sel) {
-  styleItemSelect(sel);
-  getDropdowns(id)[si].items[ii].status = sel.value;
-  debounceSave(id);
-  renderDropdowns(id); // re-render to update count
-}
-function removeItem(id, si, ii) {
-  getDropdowns(id)[si].items.splice(ii, 1);
-  debounceSave(id); renderDropdowns(id);
-}
-function removeSection(id, si) {
-  if (!confirm('Remove this section?')) return;
-  getDropdowns(id).splice(si, 1);
-  debounceSave(id); renderDropdowns(id);
-}
-function showAddItem(si) {
-  document.getElementById('inline-add-'+si).classList.add('visible');
-}
-function cancelAdd(si) {
-  const el = document.getElementById('inline-add-'+si);
-  el.classList.remove('visible');
-  document.getElementById('add-label-'+si).value = '';
-  document.getElementById('add-url-'+si).value = '';
-}
-function confirmAddItem(id, si) {
-  const label = document.getElementById('add-label-'+si).value.trim();
-  const url = document.getElementById('add-url-'+si).value.trim();
-  if (!label) return;
-  getDropdowns(id)[si].items.push({ label, url: url||'#', status:'Not Started', note:'' });
-  debounceSave(id); renderDropdowns(id);
-}
-function addDropdownSection() {
-  if (!currentId) return;
-  getDropdowns(currentId).push({ section: 'New Section', items: [] });
-  debounceSave(currentId); renderDropdowns(currentId);
-}
+function toggleSection(hdr){const items=hdr.nextElementSibling;hdr.classList.toggle('collapsed');items.classList.toggle('hidden');}
+function toggleItemNote(noteId){const row=document.getElementById(noteId);const isOpen=row.classList.toggle('open');if(isOpen)row.querySelector('textarea').focus();}
+function renameDropdownSection(id,si,val){getDropdowns(id)[si].section=val;debounceSave(id);}
+function updateItemNote(id,si,ii,val){getDropdowns(id)[si].items[ii].note=val;const t=document.querySelector(`#dd-item-${si}-${ii} .item-note-toggle`);if(t){t.classList.toggle('has-note',!!val.trim());t.title=val.trim()?'Edit note':'Add note';}debounceSave(id);}
+function updateItemStatus(id,si,ii,sel){styleItemSelect(sel);getDropdowns(id)[si].items[ii].status=sel.value;debounceSave(id);renderDropdowns(id);}
+function removeItem(id,si,ii){getDropdowns(id)[si].items.splice(ii,1);debounceSave(id);renderDropdowns(id);}
+function removeSection_dd(id,si){if(!confirm('Remove this section?')) return;getDropdowns(id).splice(si,1);debounceSave(id);renderDropdowns(id);}
+function showAddItem(si){document.getElementById('inline-add-'+si).classList.add('visible');}
+function cancelAdd(si){const el=document.getElementById('inline-add-'+si);el.classList.remove('visible');document.getElementById('add-label-'+si).value='';document.getElementById('add-url-'+si).value='';}
+function confirmAddItem(id,si){const label=document.getElementById('add-label-'+si).value.trim();const url=document.getElementById('add-url-'+si).value.trim();if(!label) return;getDropdowns(id)[si].items.push({label,url:url||'#',status:'Not Started',note:''});debounceSave(id);renderDropdowns(id);}
+function addDropdownSection(){if(!currentId) return;getDropdowns(currentId).push({section:'New Section',items:[]});debounceSave(currentId);renderDropdowns(currentId);}
 
 // ── Images tab + Lightbox ──
-let lbImages = []; let lbIndex = 0;
-
-function renderImages(id) {
-  const grid = document.getElementById('dp-img-grid');
-  const p = PAGE_MAP[id];
-  if (!p || !p.images || p.images.length === 0) {
-    grid.innerHTML = '<div class="no-images-msg" style="grid-column:1/-1">No images found in WordPress export for this page.</div>';
-    return;
-  }
-  lbImages = p.images;
-  grid.innerHTML = p.images.map((img, i) => `
-    <div class="img-thumb-wrap" onclick="openLightbox(${i})">
-      <img src="${img.url}" alt="${img.name}" onerror="this.parentElement.style.display='none'">
-      <div class="img-thumb-name">${img.name}</div>
-    </div>`).join('');
+let lbImages=[],lbIndex=0;
+function renderImages(id){
+  const grid=document.getElementById('dp-img-grid');
+  const p=PAGE_MAP[id];
+  if(!p||!p.images||!p.images.length){grid.innerHTML='<div class="no-images-msg" style="grid-column:1/-1">No images found for this page.</div>';return;}
+  lbImages=p.images;
+  grid.innerHTML=p.images.map((img,i)=>`<div class="img-thumb-wrap" onclick="openLightbox(${i})"><img src="${img.url}" alt="${img.name}" onerror="this.parentElement.style.display='none'"><div class="img-thumb-name">${img.name}</div></div>`).join('');
 }
-
-function openLightbox(i) {
-  lbIndex = i;
-  document.getElementById('lb-img').src = lbImages[i].url;
-  document.getElementById('lb-caption').textContent = lbImages[i].name;
-  document.getElementById('lb-counter').textContent = `${i+1} of ${lbImages.length}`;
-  document.getElementById('lightbox').classList.add('open');
-}
-function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
-function lbNav(dir) {
-  lbIndex = (lbIndex + dir + lbImages.length) % lbImages.length;
-  openLightbox(lbIndex);
-}
-document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) closeLightbox(); });
-document.addEventListener('keydown', e => {
-  if (!document.getElementById('lightbox').classList.contains('open')) return;
-  if (e.key==='Escape') closeLightbox();
-  if (e.key==='ArrowRight') lbNav(1);
-  if (e.key==='ArrowLeft') lbNav(-1);
+function openLightbox(i){lbIndex=i;document.getElementById('lb-img').src=lbImages[i].url;document.getElementById('lb-caption').textContent=lbImages[i].name;document.getElementById('lb-counter').textContent=`${i+1} of ${lbImages.length}`;document.getElementById('lightbox').classList.add('open');}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
+function lbNav(dir){lbIndex=(lbIndex+dir+lbImages.length)%lbImages.length;openLightbox(lbIndex);}
+document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))closeLightbox();});
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('lightbox').classList.contains('open')){if(e.key==='Escape')closeLightbox();if(e.key==='ArrowRight')lbNav(1);if(e.key==='ArrowLeft')lbNav(-1);}
 });
 
 // ── Bulk actions ──
-async function markAll(type, val) {
-  ALL_IDS.forEach(id=>{state[id][type]=val;applyState(id);}); updateStats();
+async function markAll(type,val){
+  const ids=getAllIds();ids.forEach(id=>{if(state[id])state[id][type]=val;applyState(id);});updateStats();
   setSyncStatus('syncing','Saving all…');
-  try {
-    await sbUpsert('page_status', ALL_IDS.map(id=>({ id, copy_status:state[id].copy_status, image_status:state[id].image_status, copy_notes:state[id].copy_notes, image_notes:state[id].image_notes, updated_by:userName||'Anonymous', updated_at:new Date().toISOString(), dropdowns:JSON.stringify(state[id].dropdowns||getDefaultDropdowns(id)) })));
-    setSyncStatus('saved','Saved ✓'); setTimeout(()=>setSyncStatus('','Live'),2000);
-  } catch(e){ setSyncStatus('error','Error'); }
+  try{await sbUpsert('page_status',ids.filter(id=>state[id]).map(id=>({id,copy_status:state[id].copy_status,image_status:state[id].image_status,copy_notes:state[id].copy_notes,image_notes:state[id].image_notes,updated_by:userName||'Anonymous',updated_at:new Date().toISOString(),dropdowns:JSON.stringify(state[id].dropdowns||getDefaultDropdowns(id))})));setSyncStatus('saved','Saved ✓');setTimeout(()=>setSyncStatus('','Live'),2000);}catch(e){setSyncStatus('error','Error');}
 }
-async function resetAll() {
+async function resetAll(){
   if(!confirm('Reset ALL statuses to Not Started for everyone?')) return;
-  ALL_IDS.forEach(id=>{state[id].copy_status='Not Started';state[id].image_status='Not Started';applyState(id);}); updateStats();
+  const ids=getAllIds();ids.forEach(id=>{if(state[id]){state[id].copy_status='Not Started';state[id].image_status='Not Started';}applyState(id);});updateStats();
   setSyncStatus('syncing','Saving…');
-  try {
-    await sbUpsert('page_status', ALL_IDS.map(id=>({ id, copy_status:'Not Started', image_status:'Not Started', copy_notes:state[id].copy_notes, image_notes:state[id].image_notes, updated_by:userName||'Anonymous', updated_at:new Date().toISOString(), dropdowns:JSON.stringify(state[id].dropdowns||getDefaultDropdowns(id)) })));
-    setSyncStatus('saved','Saved ✓'); setTimeout(()=>setSyncStatus('','Live'),2000);
-  } catch(e){ setSyncStatus('error','Error'); }
+  try{await sbUpsert('page_status',ids.filter(id=>state[id]).map(id=>({id,copy_status:'Not Started',image_status:'Not Started',copy_notes:state[id].copy_notes,image_notes:state[id].image_notes,updated_by:userName||'Anonymous',updated_at:new Date().toISOString(),dropdowns:JSON.stringify(state[id].dropdowns||getDefaultDropdowns(id))})));setSyncStatus('saved','Saved ✓');setTimeout(()=>setSyncStatus('','Live'),2000);}catch(e){setSyncStatus('error','Error');}
 }
-function exportCSV() {
-  const rows = [['Page ID','Page Name','URL','WP Status','Copy Status','Copy Notes','Image Status','Image Notes','Dropdown Items','Last Updated By']];
-  ALL_IDS.forEach(id=>{
-    const p=PAGE_MAP[id]; const s=state[id];
-    const dds = (s.dropdowns||getDefaultDropdowns(id)).flatMap(sec=>sec.items.map(i=>`${sec.section}: ${i.label} (${i.status||'Not Started'})`)).join('; ');
-    rows.push([id,p?p.name:id,p?p.url:'',p?p.wpStatus:'',s.copy_status,s.copy_notes,s.image_status,s.image_notes,dds,s.updated_by]);
-  });
+function exportCSV(){
+  const rows=[['Page ID','Page Name','URL','WP Status','Copy Status','Copy Notes','Image Status','Image Notes','Dropdown Items','Last Updated By']];
+  getAllIds().forEach(id=>{const p=PAGE_MAP[id];const s=state[id]||{};const dds=(s.dropdowns||getDefaultDropdowns(id)).flatMap(sec=>sec.items.map(i=>`${sec.section}: ${i.label} (${i.status||'Not Started'})`)).join('; ');rows.push([id,p?p.name:id,p?p.url:'',p?p.wpStatus:'',s.copy_status,s.copy_notes,s.image_status,s.image_notes,dds,s.updated_by]);});
   const csv=rows.map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='mirror_image_content_status.csv'; a.click();
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='mirror_image_content_status.csv';a.click();
 }
 
 // ── Polling ──
-let lastSig = '';
-async function poll() {
-  try {
-    const rows = await sbGet('page_status');
-    const sig = JSON.stringify(rows);
-    if (sig!==lastSig) {
+let lastSig='';
+async function poll(){
+  try{
+    const rows=await sbGet('page_status');
+    const sig=JSON.stringify(rows);
+    if(sig!==lastSig){
       lastSig=sig;
       rows.forEach(row=>{
-        if (!state[row.id]) return;
-        const changed = state[row.id].copy_status!==row.copy_status || state[row.id].image_status!==row.image_status;
-        state[row.id] = { copy_status:row.copy_status, image_status:row.image_status, copy_notes:row.copy_notes||'', image_notes:row.image_notes||'', updated_by:row.updated_by||'', updated_at:row.updated_at||'', dropdowns: row.dropdowns ? JSON.parse(row.dropdowns) : null };
-        applyState(row.id, changed);
+        if(!state[row.id]) return;
+        const changed=state[row.id].copy_status!==row.copy_status||state[row.id].image_status!==row.image_status;
+        state[row.id]={copy_status:row.copy_status,image_status:row.image_status,copy_notes:row.copy_notes||'',image_notes:row.image_notes||'',updated_by:row.updated_by||'',updated_at:row.updated_at||'',dropdowns:row.dropdowns?JSON.parse(row.dropdowns):null};
+        if(changed) applyStateFlash(row.id); else applyState(row.id);
       });
       updateStats();
-      if (currentId) { renderDropdowns(currentId); }
+      if(currentId) renderDropdowns(currentId);
     }
-  } catch(e){ console.warn('Poll error',e); }
+  }catch(e){console.warn('Poll error',e);}
 }
 
 // ── Init ──
 (async()=>{
-  try {
-    const rows = await sbGet('page_status');
+  try{
+    // Load structure from DB (or use defaults)
+    let structRows=[];
+    try{ structRows=await sbGet('site_structure','id=eq.main'); }catch(e){}
+
+    if(structRows.length&&structRows[0].data){
+      SITE=JSON.parse(structRows[0].data);
+    } else {
+      SITE=JSON.parse(JSON.stringify(DEFAULT_SITE));
+      // Seed structure to DB
+      await saveStructure().catch(()=>{});
+    }
+
+    // Build PAGE_MAP
+    PAGE_MAP={home:HOME_PAGE};
+    SITE.forEach(sec=>sec.pages.forEach(p=>{PAGE_MAP[p.id]=p;}));
+
+    // Init state for all pages
+    const allIds=['home',...SITE.flatMap(s=>s.pages.map(p=>p.id))];
+    allIds.forEach(id=>{state[id]={copy_status:'Not Started',image_status:'Not Started',copy_notes:'',image_notes:'',updated_by:'',updated_at:'',dropdowns:null};});
+
+    // Load statuses from DB
+    const rows=await sbGet('page_status');
     rows.forEach(row=>{
-      if(state[row.id]) state[row.id]={ copy_status:row.copy_status, image_status:row.image_status, copy_notes:row.copy_notes||'', image_notes:row.image_notes||'', updated_by:row.updated_by||'', updated_at:row.updated_at||'', dropdowns: row.dropdowns ? JSON.parse(row.dropdowns) : null };
+      if(state[row.id]) state[row.id]={copy_status:row.copy_status,image_status:row.image_status,copy_notes:row.copy_notes||'',image_notes:row.image_notes||'',updated_by:row.updated_by||'',updated_at:row.updated_at||'',dropdowns:row.dropdowns?JSON.parse(row.dropdowns):null};
     });
-    ALL_IDS.forEach(id=>applyState(id)); updateStats();
+
+    buildGrid();
     setSyncStatus('saved','Live ✓'); setTimeout(()=>setSyncStatus('','Live'),1500);
     lastSig=JSON.stringify(rows);
-  } catch(e){ setSyncStatus('error','DB error — check Supabase setup'); console.error('Load failed:',e); }
+  }catch(e){
+    // Fallback: load defaults offline
+    SITE=JSON.parse(JSON.stringify(DEFAULT_SITE));
+    PAGE_MAP={home:HOME_PAGE};
+    SITE.forEach(sec=>sec.pages.forEach(p=>{PAGE_MAP[p.id]=p;}));
+    const allIds=['home',...SITE.flatMap(s=>s.pages.map(p=>p.id))];
+    allIds.forEach(id=>{state[id]={copy_status:'Not Started',image_status:'Not Started',copy_notes:'',image_notes:'',updated_by:'',updated_at:'',dropdowns:null};});
+    buildGrid();
+    setSyncStatus('error','DB error — check Supabase setup'); console.error('Load failed:',e);
+  }
   document.getElementById('loading').style.display='none';
-  document.querySelectorAll('.card-select').forEach(styleSelect);
   setInterval(poll,8000);
 })();
 
-// Also need to update Supabase table to support dropdowns column
-// Run in SQL editor: ALTER TABLE page_status ADD COLUMN IF NOT EXISTS dropdowns text;
+// Supabase: run these in SQL editor:
+// ALTER TABLE page_status ADD COLUMN IF NOT EXISTS dropdowns text;
+// CREATE TABLE IF NOT EXISTS site_structure (id text primary key, data text, updated_at timestamptz);
+// ALTER TABLE site_structure ENABLE ROW LEVEL SECURITY;
+// CREATE POLICY "Allow all" ON site_structure FOR ALL USING (true) WITH CHECK (true);
 </script>
 </body>
 </html>
