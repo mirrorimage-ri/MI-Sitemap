@@ -343,10 +343,54 @@
   .drive-set-folder-btn{background:none;border:1px dashed rgba(255,255,255,.2);border-radius:4px;color:#aaa;font-size:.65rem;padding:3px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;}
   .drive-set-folder-btn:hover{border-color:var(--accent2);color:var(--accent2);}
 
+
+
+  /* Build Doc tab */
+  .bd-section{margin-bottom:22px;}
+  .bd-section-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.07em;color:var(--accent2);border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:6px;margin-bottom:10px;}
+  .bd-table{width:100%;border-collapse:collapse;font-size:.68rem;}
+  .bd-table th{background:rgba(255,255,255,.07);color:#aaa;text-transform:uppercase;letter-spacing:.05em;padding:5px 7px;text-align:left;font-size:.62rem;font-weight:700;}
+  .bd-table td{padding:6px 7px;border-bottom:1px solid rgba(255,255,255,.05);color:#ddd;vertical-align:top;line-height:1.4;}
+  .bd-table tr:last-child td{border-bottom:none;}
+  .bd-status{display:inline-block;padding:1px 6px;border-radius:10px;font-size:.6rem;font-weight:700;white-space:nowrap;}
+  .bd-status.ok{background:rgba(76,175,125,.2);color:#4caf7d;border:1px solid rgba(76,175,125,.3);}
+  .bd-status.needs{background:rgba(245,166,35,.2);color:var(--accent2);border:1px solid rgba(245,166,35,.3);}
+  .bd-status.add{background:rgba(144,202,249,.2);color:#90caf9;border:1px solid rgba(144,202,249,.3);}
+  .bd-status.placeholder{background:rgba(232,64,51,.2);color:#ff8a80;border:1px solid rgba(232,64,51,.3);}
+  .bd-status.new{background:rgba(167,139,250,.2);color:#c4b5fd;border:1px solid rgba(167,139,250,.3);}
+  .bd-search{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;color:white;font-family:'DM Sans',sans-serif;font-size:.72rem;padding:6px 9px;outline:none;margin-bottom:12px;}
+  .bd-search::placeholder{color:#555;}
+  .bd-search:focus{border-color:var(--accent2);}
+  .bd-intro{font-size:.72rem;color:#888;line-height:1.5;margin-bottom:14px;padding:10px;background:rgba(255,255,255,.04);border-radius:4px;border-left:3px solid var(--accent2);}
+
+  /* Name prompt modal */
+  #name-prompt-overlay{position:fixed;inset:0;background:rgba(15,15,15,.92);z-index:2000;display:flex;align-items:center;justify-content:center;}
+  #name-prompt-overlay.hidden{display:none;}
+  .name-prompt-box{background:var(--ink);color:white;border-radius:10px;padding:36px 32px;width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);border-top:4px solid var(--accent);}
+  .name-prompt-box img{width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:16px;border:2px solid rgba(255,255,255,.2);}
+  .name-prompt-box h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.07em;margin-bottom:6px;}
+  .name-prompt-box p{font-size:.8rem;color:#aaa;margin-bottom:20px;line-height:1.5;}
+  .name-prompt-input{width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:6px;color:white;font-family:'DM Sans',sans-serif;font-size:1rem;padding:10px 14px;outline:none;text-align:center;margin-bottom:14px;}
+  .name-prompt-input:focus{border-color:var(--accent2);}
+  .name-prompt-btn{width:100%;background:var(--accent);border:none;border-radius:6px;color:white;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.07em;padding:11px;cursor:pointer;transition:background .15s;}
+  .name-prompt-btn:hover{background:#c0392b;}
+
   @media print{header{position:static}#detail-panel,#name-banner,.controls{display:none!important}}
 </style>
 </head>
 <body>
+
+
+<!-- Name Prompt -->
+<div id="name-prompt-overlay">
+  <div class="name-prompt-box">
+    <img src="data:image/png;base64,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" alt="Mirror Image">
+    <h2>Welcome to the Tracker</h2>
+    <p>Enter your name so your teammates<br>know who made changes.</p>
+    <input class="name-prompt-input" id="name-prompt-input" type="text" placeholder="Your name…" maxlength="30">
+    <button class="name-prompt-btn" onclick="submitNamePrompt()">Let's Go</button>
+  </div>
+</div>
 
 <div id="loading"><div class="spinner"></div><h2>Loading Sitemap</h2><p>Connecting to database…</p></div>
 
@@ -1020,15 +1064,36 @@ async function getOrCreateFolder(name, parentId=null) {
   return created.id;
 }
 
-// Get or create page folder: Root/PageName
+// Get or create page folder using shared root from Supabase
+let sharedRootFolderId = null;
+
+async function getSharedRootFolderId() {
+  if (sharedRootFolderId) return sharedRootFolderId;
+  // Try Supabase first
+  try {
+    const rows = await sbGet('site_structure', 'id=eq.drive_root');
+    if (rows.length && rows[0].data) {
+      sharedRootFolderId = rows[0].data;
+      return sharedRootFolderId;
+    }
+  } catch(e) { console.warn('Could not fetch drive root from Supabase'); }
+  // Create root folder and save to Supabase for everyone
+  const rootId = await getOrCreateFolder(ROOT_FOLDER_NAME);
+  sharedRootFolderId = rootId;
+  try {
+    await sbUpsert('site_structure', [{id:'drive_root', data: rootId, updated_at: new Date().toISOString()}]);
+  } catch(e) { console.warn('Could not save drive root to Supabase'); }
+  return rootId;
+}
+
 async function getPageFolderId(pageId) {
   if (pageFolderIds[pageId]) return pageFolderIds[pageId];
   const p = PAGE_MAP[pageId];
-  const rootId = await getOrCreateFolder(ROOT_FOLDER_NAME);
-  const pageId2 = await getOrCreateFolder(p ? p.name : pageId, rootId);
-  pageFolderIds[pageId] = pageId2;
+  const rootId = await getSharedRootFolderId();
+  const folderId = await getOrCreateFolder(p ? p.name : pageId, rootId);
+  pageFolderIds[pageId] = folderId;
   saveFolderIds();
-  return pageId2;
+  return folderId;
 }
 
 // List image files in a folder
@@ -1540,6 +1605,214 @@ function addActionItem() {
   renderActionItems();
 }
 
+// ── Name Prompt ──────────────────────────────────────────────────────────────
+function submitNamePrompt() {
+  const val = document.getElementById('name-prompt-input').value.trim();
+  if (!val) { document.getElementById('name-prompt-input').focus(); return; }
+  userName = val;
+  localStorage.setItem('mi_username', val);
+  document.getElementById('user-name-input').value = val;
+  document.getElementById('name-prompt-overlay').classList.add('hidden');
+}
+document.getElementById('name-prompt-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitNamePrompt();
+});
+// Show prompt on load if no name saved
+(function() {
+  const saved = localStorage.getItem('mi_username');
+  if (saved) {
+    document.getElementById('name-prompt-overlay').classList.add('hidden');
+    document.getElementById('user-name-input').value = saved;
+  }
+})();
+
+// ── Master Build Doc ──────────────────────────────────────────────────────────
+const BUILD_DOC_SECTIONS = [
+  { title: '1. Navigation & Site Structure', rows: [
+    ['Services dropdown','✎ NEEDS WORK','Rename to: Garment Printing, Embroidery, Promo Products, Art & Design (NEW), Custom Manufacturing (NEW), Screen Printed Posters (NEW), Fulfillment/Web Store (NEW)','Meeting'],
+    ['Gallery dropdown','✎ NEEDS WORK','Add sub-pages: Garment Decoration, Embroidery, Promotional Products. Photo album style with captions and easy uploads.','Meeting'],
+    ['Resources dropdown','✎ NEEDS WORK','Add: Product Catalog, Artwork Guidelines, Art Submission Guidelines, Ink Kitchen','Meeting'],
+    ['Footer sponsor logos','➕ ADD','Add logos: Hanes, Gildan, Bayside, Lane 7, S&S, SanMar, LAT Apparel','Meeting'],
+    ['Newsletter signup','➕ ADD','Add opt-in signup — feeds into CRM once built. Monthly frequency.','Meeting'],
+  ]},
+  { title: '2. Homepage', rows: [
+    ['Hero tagline','✓ OK','Good as-is.','Audit'],
+    ['Hero/featured images','✎ NEEDS WORK','Lead with Farm Aid samples as hero. Replace placeholder. Show diverse work: screen print, embroidery, special effects.','Meeting'],
+    ['Company description','✓ OK','Good. Add: shipping nationwide from RI and SC.','Meeting'],
+    ['Capabilities list','✓ OK','Good as-is.','Audit'],
+    ['Scale reference','➕ ADD','Add: "From 50-piece orders to 230,000-piece runs"','Meeting'],
+    ['Testimonial','⚠ PLACEHOLDER','PRIMARY: Jeffrey M., Newport RI (Yelp, Feb 2024). SLOT 2: Ingrid S., Cambridge MA. SLOT 3: Matt B., New Hartford NY. VIP testimonials coming from Rick+Aimee outreach.','Audit'],
+    ['Phone number','✎ NEEDS WORK','Shows (401)724-5356 — FAQ shows 5353. RICK TO CONFIRM which is correct, then standardize everywhere.','Audit'],
+    ['Humor/personality','➕ ADD','Rick: add humor throughout. Examples: Biggie story, Farmers Kick Ass, Brett B. Yelp review.','Meeting'],
+  ]},
+  { title: '3. Garment Printing (was: Screen Printing)', rows: [
+    ['Page name','✎ NEEDS WORK','RENAME to "Garment Printing" everywhere (nav, headers, body copy)','Meeting'],
+    ['Intro description','✎ NEEDS WORK','Expand: up to 16 colors, sizes up to 18"×21.5", in-house screen printing/DTG/DTF/pad printing, award-winning separations. From 1 shirt to 350,000+.','Audit'],
+    ['Bullet list','✎ NEEDS WORK','REMOVE Hats/Polos/Patches (those are embroidery). REPLACE: T-shirts, Hoodies, Bags','Meeting'],
+    ['Garment Sourcing section','➕ ADD','"Hats, polos, union, American made — tell us what is important to you and we can find the goods."','Meeting'],
+    ['Award-Winning Quality','➕ ADD','Photo: Marilyn / Golden Image Awards. Copy about winning every major award in the industry.','Meeting'],
+    ['Precision Craftsmanship','➕ ADD','Laser exposure units, MHM machines, industry-leading equipment. "Your print will be in register and the ink will stay on longer than the shirt exists."','Meeting'],
+    ['Versatile Options','➕ ADD','Union/UAW work sample. Special effects on union logo.','Meeting'],
+    ['Scalable Solutions','➕ ADD','Photo: Farm Aid delivery (Rick and Murph). From 50 pieces to 230K+.','Meeting'],
+    ['Packaging options','➕ ADD','Bag, fold, tag, relabel, custom packaging, pad printed label. Photo: Hanes butcher paper folded shirt.','Meeting'],
+    ['"Our Process" section','✎ NEEDS WORK','REMOVE this section. Replace with: Get a quote + don't like emailing, call us + hours + phone.','Meeting'],
+    ['Max print size','✎ NEEDS WORK','Art Guidelines says 16"×21", FAQ says 18"×21.5". RICK TO CONFIRM correct number.','Audit'],
+  ]},
+  { title: '4. Embroidery', rows: [
+    ['Hero intro','✎ NEEDS WORK','Strengthen: multi-head machines, professional digitizing, clean durable stitching, handles everything in-house.','Audit'],
+    ['Flat Embroidery desc','⚠ PLACEHOLDER','REPLACE lorem ipsum: "We can do simple and it will look great, done professionally. Up to 15 thread colors per job." REMOVE "Learn More" button.','Meeting'],
+    ['3D/Puff section','➕ ADD','Rick: "We have machines that do this really well." Foam layer, raised effect, bold logos, 40-50pt min, great on caps. Ask Steve Pal.','Meeting'],
+    ['Digitizing Services','➕ ADD','"We have everything digitized specifically to our machines to get the best look." Photo: Farm Aid concert image.','Meeting'],
+    ['Garment Sourcing','➕ ADD','Same as Garment Printing: "Hats, polos, union, American made — tell us what is important to you."','Meeting'],
+    ['Bags + Patches','➕ ADD','Add both as embroidery items. Amy: "people tend to look for patches under embroidery."','Meeting'],
+    ['Packaging options','➕ ADD','Bag, fold, tag, relabel, custom packaging, pad printed label.','Meeting'],
+    ['Photos','✎ NEEDS WORK','Sam Adams Cincinnati hat, Boston Firefighters (confirm clearance), Farm Aid Tractor Logo, Farm Aid concert (digitizing).','Meeting'],
+  ]},
+  { title: '5. Art and Design (NEW PAGE)', rows: [
+    ['Page creation','➕ NEW PAGE','Build new page under Services dropdown','Meeting'],
+    ['Film Fest artwork','➕ ADD','Flowers and film reels design work','Meeting'],
+    ['Farm Aid artwork','➕ ADD','"Farmers Kick Ass" — Rick: "Funny is good"','Meeting'],
+    ['Award-winning art','➕ ADD','Award-winning artwork samples + any recognition','Meeting'],
+    ['Design services copy','➕ ADD','"We offer design services at fair rates. Simple typesetting for a small fee, custom designs quoted on time — usually comes out to less than $1 per shirt."','Audit'],
+    ['Biggie story','➕ ADD','"This print is so good an ad agency thought it was done digitally." Rick specifically wants this on the site.','Meeting'],
+  ]},
+  { title: '6. Custom Manufacturing (NEW PAGE)', rows: [
+    ['Page creation','➕ NEW PAGE','Build new page under Services dropdown','Meeting'],
+    ['Farm Aid items','➕ ADD','Denim jacket and flannel photos','Meeting'],
+    ['WMBR blanket','➕ ADD','Blanket photo. Story: original vendor ran out, Vietnam manufacturer replicated them better and faster.','Meeting'],
+    ['Intro copy','➕ ADD','"Cut, sew and dye apparel, hats, bags and more — just inquire."','Meeting'],
+  ]},
+  { title: '7. Screen Printed Posters (NEW PAGE)', rows: [
+    ['Page creation','➕ NEW PAGE','Build new page under Services dropdown','Meeting'],
+    ['Hong poster','➕ ADD','"Came out gorgeous" — showcase piece','Meeting'],
+    ['Film festival posters','➕ ADD','Multiple years of film festival poster work','Meeting'],
+    ['Copy','➕ ADD','Screen printed posters have richness/texture digital can't match. Limited-edition art prints, event posters, promotional pieces.','Suggested'],
+  ]},
+  { title: '8. Fulfillment / Web Store (NEW PAGE)', rows: [
+    ['Page creation','➕ NEW PAGE','Build new page under Services dropdown','Meeting'],
+    ['Doing Good Merch','➕ ADD','Reference as example','Meeting'],
+    ['Order My Gear','➕ ADD','Reference as example','Meeting'],
+    ['Copy','➕ ADD','"Most successful thing in the last few years." Pop-up stores, permanent merch shops, we handle printing/packing/shipping.','Meeting'],
+  ]},
+  { title: '9. Promotional Products', rows: [
+    ['Hero description','✓ OK','Good as-is.','Audit'],
+    ['Product list','✎ NEEDS WORK','Keep tote bags, pens, drinkware, notebooks. REMOVE apparel items (hats, polos) — those belong under Embroidery.','Meeting'],
+    ['Recycled/organic','➕ ADD','Highlight recycled and organic materials prominently','Meeting'],
+    ['Photos','✎ NEEDS WORK','Replace with real items: whistles, carpenter's pencils, WMBR stickers, Amnesty mugs, notebooks, Majority Report dog collar, MI honey jar.','Meeting'],
+  ]},
+  { title: '10. Gallery / Our Work', rows: [
+    ['All gallery images','⚠ STOCK PHOTOS','REPLACE ALL with real MI work. Every image is generic stock — this is the most damaging page.','Audit'],
+    ['Sub-pages','➕ ADD','Break into: Garment Decoration, Embroidery, Promotional Products','Meeting'],
+    ['Photo management','➕ ADD','Ask Alyx: easy upload system, photo album style, 10 at a time, eventually 100+ photos. No developer needed.','Meeting'],
+    ['Captions','➕ ADD','Add captions: "Screen printed by Mirror Image" + technique explanations.','Meeting'],
+    ['Biggie story','➕ ADD','"This print is so good an ad agency thought it was digital."','Meeting'],
+  ]},
+  { title: '11. Product Catalog', rows: [
+    ['Intro copy','✎ NEEDS WORK','"We can find anything you need. If you don't see what you need here, just inquire."','Meeting'],
+    ['Supplier list','✎ NEEDS WORK','Full list: Company Casual, Sportswear Collection, LA Apparel, Bella+Canvas, RoyalApparel.com, ASTSportswear.com, LAT Apparel, Lane 7 (confirm direct), USSA (Tim Gibson).','Meeting'],
+    ['Hanes','✎ NEEDS WORK','REMOVE Hanes from supplier list','Meeting'],
+    ['Placeholder logos','⚠ PLACEHOLDER','Replace 9 generic "Logoipsum" logos with real supplier logos or text-only list.','Audit'],
+    ['Specialty callout','➕ ADD','"For USA, eco-conscious, specialty, ethical and union options — contact us."','Meeting'],
+  ]},
+  { title: '12. FAQ Page', rows: [
+    ['Overall content','✎ NEEDS WORK','Too thin — only 4 questions visible. OPEN QUESTION: short/practical (8-10 Qs) vs comprehensive (30+ Qs) vs short answers with links to service pages. Rick to decide.','Audit'],
+    ['Underbase answer','✎ NEEDS WORK','Change to: "Needed anytime the ink color is lighter than the substrate." (Amy's correction)','Meeting'],
+    ['Color matching','✎ NEEDS WORK','Fix to Pantone C (coated), not Pantone U (uncoated). (Amy's correction)','Meeting'],
+    ['Delivery promise','✎ NEEDS WORK','Rewrite: "We deliver when we say we'll deliver. If your deadline can't be met, we tell you upfront and give you a realistic date — then we hit it, no matter what."','Meeting'],
+  ]},
+  { title: '13. Artwork Guidelines', rows: [
+    ['Sizing/Placement','✓ OK','Good. Fix max print size once Rick confirms.','Audit'],
+    ['Vector docs','✓ OK','Good as-is.','Audit'],
+    ['Raster section','✓ OK','Good. Fix "RASTOR" typo to "RASTER".','Audit'],
+    ['Updated PDF','➕ ADD','Aimee has updated PDF addressing Canva issues — upload and link.','Meeting'],
+    ['Custom design','➕ ADD','Michelle may design custom version like Red Door's guidelines.','Meeting'],
+    ['File checker tool','➕ ADD','Michelle could build a resolution/file-type checker. Reduces bad submissions.','Meeting'],
+  ]},
+  { title: '14. Ink Kitchen (NEW PAGE)', rows: [
+    ['Page creation','➕ NEW PAGE','Build new page under Resources dropdown','Meeting'],
+    ['Ink eating image','➕ ADD','Image of Rick eating the ink','Meeting'],
+    ['YouTube channel','➕ ADD','Link to Ink Kitchen YouTube + subscribe prompt','Meeting'],
+    ['Copy','➕ ADD','"We share and give back to the industry. Read about industry news and demystify the sometimes mysterious ways of screen printing."','Meeting'],
+  ]},
+  { title: '15. About Us', rows: [
+    ['Company description','✓ OK','Good. Keep.','Audit'],
+    ['Printing With Purpose','✓ OK','Strong differentiator. Keep.','Audit'],
+    ['Transition paragraph','✎ NEEDS WORK','"From day one, Mirror Image has stood for more than great printing. We're a proud union shop — UAW Local 1596 — committed to union-made, USA-manufactured, and eco-friendly options sourced with integrity."','Audit'],
+    ['Who We Are section','➕ ADD','Highlight diversity and commitment. Photos: Activism Summit, Film Festival.','Meeting'],
+    ['Union prominence','➕ ADD','"Union UAW since day 1" — mention prominently. "Best printing in the world" statement.','Meeting'],
+    ['Rick Roth bio','➕ ADD','Founded 1987, printing since early 70s, Decorator of the Year, won every major award. Photo: whole team.','Audit'],
+    ['Testimonials','➕ ADD','VIP outreach: Ben Cohen, Patti Smith, Farm Aid, museums, Murph, etc. Yelp reviews as interim.','Meeting'],
+    ['Addresses','➕ ADD','Both addresses: Mirror Image + MSI (phone number only, no MSI branding).','Meeting'],
+    ['Scale','➕ ADD','50-piece orders to 230,000-piece runs','Meeting'],
+  ]},
+  { title: '16. Blog', rows: [
+    ['Blog Post 1','⚠ PLACEHOLDER','Write real post or hide. Suggested: "Custom Patches: From Design to Thread"','Audit'],
+    ['Blog Post 2','⚠ PLACEHOLDER','Write real post or hide. Suggested: union shop story, discharge vs plastisol, eco inks.','Audit'],
+    ['Blog Post 3','⚠ PLACEHOLDER','Write real post or hide. Suggested: Music Maker Foundation project story.','Audit'],
+    ['Launch decision','✎ NEEDS WORK','RICK TO DECIDE: write 2-3 real posts before launch OR hide blog from nav. Cannot launch with lorem ipsum.','Audit'],
+  ]},
+  { title: '17. Get A Quote Form', rows: [
+    ['Form destination','✎ NEEDS WORK','Email to orders@mirrorimage.com or equivalent. Currently not directed anywhere.','Meeting'],
+    ['File attachment','➕ ADD','Add file attachment field — NOT required. Speeds up quoting for customers who have artwork ready.','Meeting'],
+    ['Contact options','✎ NEEDS WORK','Include phone number and hours. No text option (One Talk doesn't support it well).','Meeting'],
+    ['Working buttons','✎ NEEDS WORK','Verify ALL buttons on ALL pages link to working form, not just mailto.','Audit'],
+  ]},
+  { title: '18. Master Action Items — By Owner', rows: [
+    ['Rick','Confirm phone number (5353 or 5356); confirm max print size; decide blog launch vs hide; supply Farm Aid delivery photo; supply Hanes butcher paper photo; supply poster photos; approve Yelp reviews; decide FAQ approach','',''],
+    ['Aimee','Collect embroidery photos (Sam Adams, Firefighters, Tractor Logo); confirm Firefighters photo clearance; collect Farm Aid photos (denim jacket, flannel, WMBR blanket); get supplier links with retail pricing; upload artwork guidelines PDF; photo of Rick, Murph and Aimee','',''],
+    ['Jessica','Collect promo photos (whistles, pencils, stickers, mugs, notebooks, dog collar); ask Steve Pal about 3D embroidery machines; get Ink Kitchen YouTube link + ink eating screenshot','',''],
+    ['Rick + Aimee','Gather VIP testimonials: Ben Cohen, Patti Smith, Farm Aid, museums, Murph, etc.','',''],
+    ['Michelle','Explore building art file checker tool; design custom artwork guidelines page (Red Door style)','',''],
+    ['Alyx (Web Designer)','Rename Screen Printing → Garment Printing across site; build new pages (Art & Design, Custom Mfg, Posters, Fulfillment); update nav with new dropdown structure; add sponsor logos to footer; gallery: enable photo uploads + captions + album style; add newsletter signup; add file attachment to Get A Quote form; replace all stock photos in Gallery; remove all lorem ipsum','',''],
+  ]},
+];
+
+function statusClass(s) {
+  if (s.includes('OK')) return 'ok';
+  if (s.includes('NEEDS')) return 'needs';
+  if (s.includes('ADD') || s.includes('NEW')) return 'add';
+  if (s.includes('PLACEHOLDER') || s.includes('STOCK')) return 'placeholder';
+  return 'add';
+}
+
+function renderBuildDoc(filter='') {
+  const lc = filter.toLowerCase();
+  let html = '<input class="bd-search" placeholder="Search build doc…" oninput="renderBuildDoc(this.value)" value="' + filter.replace(/"/g,'&quot;') + '">';
+  html += '<div class="bd-intro">Master build document — April 10, 2026. Sources: April 7 team meeting · content audit · FAQ doc (Eliot revision) · Aimee corrections.</div>';
+  BUILD_DOC_SECTIONS.forEach(sec => {
+    const filteredRows = lc ? sec.rows.filter(r => r.join(' ').toLowerCase().includes(lc)) : sec.rows;
+    if (!filteredRows.length) return;
+    html += '<div class="bd-section">';
+    html += '<div class="bd-section-title">' + sec.title + '</div>';
+    html += '<table class="bd-table"><thead><tr><th>Element</th><th>Action / Notes</th></tr></thead><tbody>';
+    filteredRows.forEach(r => {
+      const [element, status, action, source] = r;
+      const sc = statusClass(status || '');
+      html += '<tr><td><div>' + element + '</div>' +
+        (status ? '<span class="bd-status ' + sc + '">' + status + '</span>' : '') + '</td>' +
+        '<td>' + (action || status || '') + (source ? '<div style="font-size:.58rem;color:#666;margin-top:3px">' + source + '</div>' : '') + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+  });
+  document.getElementById('builddoc-content').innerHTML = html;
+}
+
+// Init build doc when tab is clicked
+const origSwitchApTab = window.switchApTab || function(){};
+function switchApTab(tab, el) {
+  apCurrentTab = tab;
+  document.querySelectorAll('.ap-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.ap-tab-pane').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('ap-pane-'+tab).classList.add('active');
+  if (tab === 'builddoc' && !document.getElementById('builddoc-content').innerHTML) {
+    renderBuildDoc();
+  }
+  if (tab === 'all' || tab === 'todo' || tab === 'done' || tab === 'nav' || tab === 'content' || tab === 'assets') {
+    renderActionItems();
+  }
+}
+
 </script>
 
 <!-- Action Panel Toggle -->
@@ -1566,6 +1839,7 @@ function addActionItem() {
     <button class="ap-tab" onclick="switchApTab('nav',this)">Nav</button>
     <button class="ap-tab" onclick="switchApTab('content',this)">Content</button>
     <button class="ap-tab" onclick="switchApTab('assets',this)">Assets</button>
+    <button class="ap-tab" onclick="switchApTab('builddoc',this)">Build Doc</button>
   </div>
   <div class="ap-filter-bar">
     <input class="ap-search" type="text" placeholder="Search actions…" oninput="renderActionItems()">
@@ -1575,7 +1849,11 @@ function addActionItem() {
     </select>
   </div>
   <div class="ap-body">
-    <div class="ap-tab-pane active" id="ap-pane-all">
+    
+<div class="ap-tab-pane" id="ap-pane-builddoc">
+  <div id="builddoc-content"></div>
+</div>
+      <div class="ap-tab-pane active" id="ap-pane-all">
       <div class="ap-stats" id="ap-stats"></div>
       <div id="ap-items-list"></div>
       <div class="ap-add-item">
