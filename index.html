@@ -1607,24 +1607,34 @@ function addActionItem() {
 
 // ── Name Prompt ──────────────────────────────────────────────────────────────
 function submitNamePrompt() {
-  const val = document.getElementById('name-prompt-input').value.trim();
-  if (!val) { document.getElementById('name-prompt-input').focus(); return; }
+  const input = document.getElementById('name-prompt-input');
+  const val = input ? input.value.trim() : '';
+  if (!val) { if(input) input.focus(); return; }
   userName = val;
   localStorage.setItem('mi_username', val);
-  document.getElementById('user-name-input').value = val;
-  document.getElementById('name-prompt-overlay').classList.add('hidden');
+  const nameField = document.getElementById('user-name-input');
+  if (nameField) nameField.value = val;
+  const overlay = document.getElementById('name-prompt-overlay');
+  if (overlay) overlay.style.display = 'none';
 }
-document.getElementById('name-prompt-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') submitNamePrompt();
-});
-// Show prompt on load if no name saved
-(function() {
-  const saved = localStorage.getItem('mi_username');
-  if (saved) {
-    document.getElementById('name-prompt-overlay').classList.add('hidden');
-    document.getElementById('user-name-input').value = saved;
+
+// Wire up Enter key and auto-hide — deferred until DOM is ready
+window.addEventListener('DOMContentLoaded', function() {
+  const input = document.getElementById('name-prompt-input');
+  if (input) {
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') submitNamePrompt();
+    });
   }
-})();
+  const saved = localStorage.getItem('mi_username');
+  const overlay = document.getElementById('name-prompt-overlay');
+  if (saved && overlay) {
+    overlay.style.display = 'none';
+    userName = saved;
+    const nameField = document.getElementById('user-name-input');
+    if (nameField) nameField.value = saved;
+  }
+});
 
 // ── Master Build Doc ──────────────────────────────────────────────────────────
 const BUILD_DOC_SECTIONS = [
